@@ -12,8 +12,10 @@ abstract class AggregateIdentityV4 implements AggregateIdentity
 {
     use HasAggregateIdentity;
 
-    public static function create(): self
+    protected static function fromV4(): static
     {
         return new static(Uuid::v4());
     }
+
+    abstract public static function create(): AggregateIdentity;
 }

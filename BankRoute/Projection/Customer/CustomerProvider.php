@@ -7,9 +7,9 @@ namespace BankRoute\Projection\Customer;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Database\Eloquent\Model;
 
-final class CustomerProvider
+final readonly class CustomerProvider
 {
-    public function __construct(private readonly CustomerModel $model)
+    public function __construct(private CustomerModel $model)
     {
     }
 

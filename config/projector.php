@@ -133,6 +133,11 @@ return [
         'commands' => [
             \Chronhub\Larastorm\Support\Console\ReadProjectionCommand::class,
             \Chronhub\Larastorm\Support\Console\WriteProjectionCommand::class,
+            \Chronhub\Larastorm\Support\Console\Generator\MakePersistentProjectionCommand::class,
+            \Chronhub\Larastorm\Support\Console\Generator\MakeReadModelProjectionCommand::class,
+            \Chronhub\Larastorm\Support\Console\Generator\MakeQueryProjectionCommand::class,
+            \Chronhub\Larastorm\Support\Supervisor\Command\SuperviseProjectionCommand::class,
+            \Chronhub\Larastorm\Support\Supervisor\Command\CheckSupervisedProjectionStatusCommand::class,
         ],
     ],
 ];

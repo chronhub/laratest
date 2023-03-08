@@ -4,29 +4,35 @@ declare(strict_types=1);
 
 namespace BankRoute\Model\Customer\Handler;
 
-use App\Report\RegisterCustomer;
 use BankRoute\Model\Customer\Customer;
 use BankRoute\Model\Customer\CustomerId;
+use BankRoute\Model\Customer\CustomerEmail;
+use Chronhub\Storm\Message\Attribute\AsHandler;
 use BankRoute\Model\Customer\CustomerCollection;
+use App\Report\CustomerRegistration\RegisterCustomer;
 use BankRoute\Model\Customer\Service\UniqueCustomerEmail;
 use BankRoute\Model\Customer\Exception\CustomerAlreadyExists;
 
-final class RegisterCustomerHandler
+#[AsHandler(
+    domain: RegisterCustomer::class,
+    method: 'command',
+)]
+final readonly class RegisterCustomerHandler
 {
-    public function __construct(private readonly CustomerCollection $customers,
-                                private readonly UniqueCustomerEmail $uniqueCustomerEmail)
+    public function __construct(private CustomerCollection $customers,
+                                private UniqueCustomerEmail $uniqueCustomerEmail)
     {
     }
 
     public function command(RegisterCustomer $command): void
     {
-        $accountId = $command->customerId();
+        $accountId = CustomerId::fromString($command->content['customer_id']);
 
         if (null !== $this->customers->get($accountId)) {
             throw CustomerAlreadyExists::withId($accountId);
         }
 
-        $email = $command->email();
+        $email = CustomerEmail::fromString($command->content['customer_email']);
 
         $otherAccountId = ($this->uniqueCustomerEmail)($email);
 

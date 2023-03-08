@@ -13,8 +13,7 @@ use Chronhub\Storm\Contracts\Projector\ReadModelProjectorCaster;
 
 final class QueryCustomerPerEmailCommand extends Command
 {
-    protected $signature = 'bank:find-customer-per-email
-                            { email : customer email }';
+    protected $signature = 'bank:query-customer-per-email { email : customer email }';
 
     public function handle(): int
     {

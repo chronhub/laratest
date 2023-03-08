@@ -56,10 +56,8 @@ return [
     */
 
     'serializer' => [
-        'concrete' => \Chronhub\Storm\Serializer\MessagingSerializer::class,
         'normalizers' => [
             \Symfony\Component\Serializer\Normalizer\UidNormalizer::class,
-            'serializer.normalizer.event_time', // bound and tied to system clock
         ],
     ],
 

@@ -6,6 +6,7 @@ namespace BankRoute\Projection\Customer;
 
 use BankRoute\Projection\ReadModelTable;
 use Illuminate\Database\Schema\Blueprint;
+use BankRoute\Model\Customer\CustomerStatus;
 use Chronhub\Larastorm\Support\ReadModel\InteractWithBuilder;
 use Chronhub\Larastorm\Support\ReadModel\ReadModelConnection;
 
@@ -18,6 +19,7 @@ final class CustomerReadModel extends ReadModelConnection
         return function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->string('email')->index();
+            $table->enum('status', CustomerStatus::strings());
             $table->timestampsTz(6);
         };
     }

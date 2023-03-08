@@ -6,16 +6,17 @@ namespace App\Console\Commands\App;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\Connection;
+use Symfony\Component\Console\Attribute\AsCommand;
 use function getenv;
 use function is_string;
 
+#[AsCommand(
+    name: 'bank:setup',
+    description: 'Setup bank account with migration and default streams creation,
+                  caution, use an empty database as it will clean everything inside'
+)]
 class ResetBankAppCommand extends Command
 {
-    protected $signature = 'bank:setup';
-
-    protected $description = 'Setup bank account with migration and default streams creation,
-                              caution, use an empty database as it will clean everything inside';
-
     /**
      * List of stream names which will be committed
      * as first commit to the event store for single strategy only

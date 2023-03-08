@@ -8,4 +8,8 @@ use BankRoute\AggregateIdentityV4;
 
 final class CustomerId extends AggregateIdentityV4
 {
+    public static function create(): CustomerId
+    {
+        return self::fromV4();
+    }
 }

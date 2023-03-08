@@ -1,5 +1,10 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+declare(strict_types=1);
 
-Route::get('/', \App\Http\Controllers\HomeController::class);
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\RegisterCustomerRandomly;
+
+Route::get('/', HomeController::class);
+Route::get('/customer/register', RegisterCustomerRandomly::class);

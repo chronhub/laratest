@@ -21,12 +21,12 @@ use function pcntl_async_signals;
 
 final class ProjectPremiumCustomerCommand extends Command implements SignalableCommandInterface
 {
-    private Projector $projection;
-
     protected $signature = 'project:customer-premium
                             { projector=emit     : projector name }
                             { --signal=1         : dispatch async signal }
                             { --in-background=1  : run in background }';
+
+    private Projector $projection;
 
     public function handle(): int
     {
@@ -54,8 +54,9 @@ final class ProjectPremiumCustomerCommand extends Command implements SignalableC
             if ($event instanceof CustomerRegistered) {
                 $customerEmail = $event->customerEmail()->value;
 
-                if (str_starts_with($customerEmail, 's')) {
+                if (str_starts_with($customerEmail, '1')) {
                     $this->emit($event);
+
                     $state['count']++;
                 }
             }

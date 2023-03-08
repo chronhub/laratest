@@ -17,7 +17,7 @@ use Chronhub\Storm\Aggregate\Attribute\AsAggregateChanged;
     aggregateId: 'customer_id',
     content: ['customer_id', 'customer_email', 'customer_status']
 )]
-final class CustomerRegistered extends DomainEvent
+class CustomerActivated extends DomainEvent
 {
     use HasConstructableContent;
 

@@ -57,6 +57,7 @@ final class ProjectCustomerReadModelCommand extends Command implements Signalabl
                     $query->insert([
                         $key => $event->aggregateId()->toString(),
                         'email' => $event->customerEmail()->value,
+                        'status' => $event->customerStatus()->value,
                         'created_at' => Clock::format($event->header(Header::EVENT_TIME)),
                     ]);
                 }, $event);
@@ -66,26 +67,6 @@ final class ProjectCustomerReadModelCommand extends Command implements Signalabl
 
             return $state;
         };
-    }
-
-    private function eventHandlersAsArray(): array
-    {
-        return [
-            CustomerRegistered::class => function (CustomerRegistered $event, array $state): array {
-                /** @var ReadModelProjectorCaster $this */
-                $this->readModel()->stack('query', function (Builder $query, string $key, CustomerRegistered $event): void {
-                    $query->insert([
-                        $key => $event->aggregateId()->toString(),
-                        'email' => $event->customerEmail()->value,
-                        'created_at' => Clock::format($event->header(Header::EVENT_TIME)),
-                    ]);
-                }, $event);
-
-                $state['count']++;
-
-                return $state;
-            },
-        ];
     }
 
     public function getSubscribedSignals(): array
