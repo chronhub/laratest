@@ -18,7 +18,11 @@ return [
     */
 
     'providers' => [
-        'eloquent' => \Chronhub\Larastorm\Projection\Projection::class,
+        'connection' => 'projector.projection_provider.pgsql',
+        //        'connection' => [
+        //            'name' => 'pgsql',
+        //            'table' => 'projections', // todo to bind
+        //        ],
         'in_memory' => \Chronhub\Storm\Projector\Provider\InMemoryProjectionProvider::class,
     ],
 
@@ -42,22 +46,22 @@ return [
             'default' => [
                 'chronicler' => ['connection', 'write'],
                 'options' => 'lazy',
-                'provider' => 'eloquent',
-                'scope' => \Chronhub\Larastorm\Projection\ConnectionProjectionQueryScope::class,
+                'provider' => 'connection',
+                'scope' => \Chronhub\Larastorm\Projection\ConnectionQueryScope::class,
             ],
 
             'emit' => [
                 'chronicler' => ['connection', 'read'],
                 'options' => 'emit_slow',
-                'provider' => 'eloquent',
-                'scope' => \Chronhub\Larastorm\Projection\ConnectionProjectionQueryScope::class,
+                'provider' => 'connection',
+                'scope' => \Chronhub\Larastorm\Projection\ConnectionQueryScope::class,
             ],
 
             'reset' => [
                 'chronicler' => ['connection', 'read'],
                 'options' => 'reset',
-                'provider' => 'eloquent',
-                'scope' => \Chronhub\Larastorm\Projection\ConnectionProjectionQueryScope::class,
+                'provider' => 'connection',
+                'scope' => \Chronhub\Larastorm\Projection\ConnectionQueryScope::class,
             ],
         ],
 
@@ -66,7 +70,7 @@ return [
                 'chronicler' => ['in_memory', 'standalone'],
                 'provider' => 'in_memory',
                 'options' => 'in_memory',
-                'scope' => \Chronhub\Storm\Projector\InMemoryProjectionQueryScope::class,
+                'scope' => \Chronhub\Storm\Projector\InMemoryQueryScope::class,
             ],
         ],
     ],

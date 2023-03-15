@@ -196,6 +196,7 @@ return [
         'routes',
         'composer.lock',
         '.env',
+        'BankRoute',
     ],
 
     /*

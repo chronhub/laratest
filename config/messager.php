@@ -6,24 +6,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | System Clock
-    |--------------------------------------------------------------------------
-    |
-    | Default use date time immutable and UTC Timezone
-    | note it does not use laravel env timezone configuration
-    |
-    */
-
-    'clock' => \Chronhub\Storm\Clock\PointInTime::class,
-
-    /*
-    |--------------------------------------------------------------------------
     | Unique identifier
     |--------------------------------------------------------------------------
     |
     */
 
-    'unique_id' => \Chronhub\Larastorm\Support\UniqueId\UniqueIdV4::class,
+    'unique_id' => \Chronhub\Storm\Message\UniqueIdV4::class,
 
     /*
     |--------------------------------------------------------------------------
@@ -69,9 +57,9 @@ return [
     */
 
     'decorators' => [
-        \Chronhub\Larastorm\Support\MessageDecorator\EventId::class,
-        \Chronhub\Larastorm\Support\MessageDecorator\EventTime::class,
-        \Chronhub\Larastorm\Support\MessageDecorator\EventType::class,
+        \Chronhub\Storm\Message\Decorator\EventId::class,
+        \Chronhub\Storm\Message\Decorator\EventTime::class,
+        \Chronhub\Storm\Message\Decorator\EventType::class,
     ],
 
     /*
@@ -83,5 +71,19 @@ return [
 
     'subscribers' => [
         \Chronhub\Storm\Reporter\Subscribers\MakeMessage::class,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Console
+    |--------------------------------------------------------------------------
+    |
+    */
+
+    'console' => [
+
+        'commands' => [
+            \Chronhub\Larastorm\Support\Console\ListMessagerSubscribersCommand::class,
+        ],
     ],
 ];

@@ -12,7 +12,9 @@ return [
 
         'repositories' => [
             'customer' => [
-                'repository' => 'generic',
+                'type' => [
+                    'alias' => 'generic',
+                ],
                 'chronicler' => \Chronhub\Storm\Contracts\Chronicler\Chronicler::class,
                 'strategy' => 'single',
                 'aggregate_type' => \BankRoute\Model\Customer\Customer::class,

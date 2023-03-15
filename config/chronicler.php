@@ -26,8 +26,9 @@ return [
 
     'defaults' => [
         'provider' => 'connection',
+        'event_stream_provider' => [],
         'providers' => [
-            'connection' => \Chronhub\Larastorm\EventStore\ConnectionChroniclerProvider::class,
+            'connection' => \Chronhub\Larastorm\EventStore\EventStoreConnectionProvider::class,
             'in_memory' => \Chronhub\Storm\Chronicler\InMemory\InMemoryChroniclerProvider::class,
         ],
     ],
@@ -72,7 +73,7 @@ return [
                     'tracker_id' => \Chronhub\Storm\Chronicler\TrackTransactionalStream::class,
                     'subscribers' => [
                         \Chronhub\Storm\Publisher\EventPublisherSubscriber::class,
-                        \Chronhub\Larastorm\Support\Bridge\MakeCausationCommand::class,
+                        \Chronhub\Storm\Support\Bridge\MakeCausationDomainCommand::class,
                     ],
                 ],
                 'write_lock' => true,
