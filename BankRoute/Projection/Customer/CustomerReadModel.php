@@ -20,6 +20,7 @@ final class CustomerReadModel extends ReadModelConnection
             $table->uuid('id')->primary();
             $table->string('email')->index();
             $table->enum('status', CustomerStatus::strings());
+            $table->uuid('current_order_id')->nullable();
             $table->timestampsTz(6);
         };
     }

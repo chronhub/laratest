@@ -8,11 +8,11 @@ use App\Models\UserRepository;
 use Chronhub\Storm\Reporter\DomainEvent;
 use Chronhub\Storm\Reporter\ReportEvent;
 use Chronhub\Storm\Reporter\ReportCommand;
-use App\Report\CustomerRegistration\AuthUserCreated;
-use App\Report\CustomerRegistration\RegisterCustomer;
+use App\Report\Customer\Signup\AuthUserCreated;
+use App\Report\Customer\Signup\RegisterCustomer;
+use App\Report\Customer\Signup\CustomerSignupStarted;
 use BankRoute\Model\Customer\Event\CustomerRegistered;
-use App\Report\CustomerRegistration\RegisterCustomerStarted;
-use App\Report\CustomerRegistration\CompleteCustomerRegistration;
+use App\Report\Customer\Signup\CustomerSignupCompleted;
 
 readonly class CustomerRegistrationProcess
 {
@@ -35,10 +35,10 @@ readonly class CustomerRegistrationProcess
     protected function processEvents(): array
     {
         return [
-            RegisterCustomerStarted::class => function (RegisterCustomerStarted $event) {
+            CustomerSignupStarted::class => function (CustomerSignupStarted $event) {
                 $userId = $event->content['id'];
 
-                $this->processManager->start(self::CUSTOMER_REGISTRATION, $userId, RegisterCustomerStarted::class);
+                $this->processManager->start(self::CUSTOMER_REGISTRATION, $userId, CustomerSignupStarted::class);
 
                 $this->processManager->next(self::CUSTOMER_REGISTRATION, $userId, CustomerRegistered::class, [
                     $event->toContent(),
@@ -65,7 +65,6 @@ readonly class CustomerRegistrationProcess
                 $this->processManager->next(self::CUSTOMER_REGISTRATION, $customerId, AuthUserCreated::class);
 
                 $this->reportEvent->relay(AuthUserCreated::fromContent($process['extra'][0]));
-                //$this->reportEvent->relay(AuthUserCreated::fromContent($process->extra()));
             },
 
             AuthUserCreated::class => function (AuthUserCreated $event) {
@@ -79,7 +78,7 @@ readonly class CustomerRegistrationProcess
 
                 $this->userRepository->register($event->content);
 
-                $this->reportEvent->relay(CompleteCustomerRegistration::fromContent([
+                $this->reportEvent->relay(CustomerSignupCompleted::fromContent([
                     'id' => $authUserId,
                     'email' => $event->content['email'],
                     'name' => $event->content['name'],

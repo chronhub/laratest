@@ -11,6 +11,7 @@ return [
         'event_decorators' => [],
 
         'repositories' => [
+
             'customer' => [
                 'type' => [
                     'alias' => 'generic',
@@ -18,6 +19,20 @@ return [
                 'chronicler' => \Chronhub\Storm\Contracts\Chronicler\Chronicler::class,
                 'strategy' => 'single',
                 'aggregate_type' => \BankRoute\Model\Customer\Customer::class,
+                'cache' => [
+                    'size' => 50,
+                    'driver' => 'redis',
+                ],
+                'event_decorators' => [],
+            ],
+
+            'order' => [
+                'type' => [
+                    'alias' => 'generic',
+                ],
+                'chronicler' => \Chronhub\Storm\Contracts\Chronicler\Chronicler::class,
+                'strategy' => 'single',
+                'aggregate_type' => \BankRoute\Model\Order\Order::class,
                 'cache' => [
                     'size' => 50,
                     'driver' => 'redis',

@@ -21,7 +21,7 @@ return [
         'connection' => 'projector.projection_provider.pgsql',
         //        'connection' => [
         //            'name' => 'pgsql',
-        //            'table' => 'projections', // todo to bind
+        //            'table' => 'projections',
         //        ],
         'in_memory' => \Chronhub\Storm\Projector\Provider\InMemoryProjectionProvider::class,
     ],

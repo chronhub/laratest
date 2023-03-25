@@ -194,6 +194,18 @@ return [
             'timeout' => 15,
             'nice' => 0,
         ],
+        'supervisor-2' => [
+            'connection' => 'redis',
+            'queue' => ['orders'],
+            'balance' => 'auto',
+            'maxProcesses' => 1,
+            'maxTime' => 0,
+            'maxJobs' => 0,
+            'memory' => 1024,
+            'tries' => 1,
+            'timeout' => 15,
+            'nice' => 0,
+        ],
     ],
 
     'environments' => [
@@ -207,9 +219,12 @@ return [
 
         'local' => [
             'supervisor-1' => [
-                'maxProcesses' => 12,
+                'maxProcesses' => 5,
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
+            ],
+            'supervisor-2' => [
+                'maxProcesses' => 5,
             ],
         ],
     ],

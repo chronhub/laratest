@@ -4,60 +4,50 @@ declare(strict_types=1);
 
 namespace App\Console\Commands\App;
 
-use Throwable;
-use Faker\Factory;
 use Illuminate\Console\Command;
 use Symfony\Component\Uid\Uuid;
-use App\Services\CustomerRegistrationService;
+use App\Services\CustomerSignUpService;
 use Symfony\Component\Console\Attribute\AsCommand;
-use BankRoute\Model\Customer\Exception\CustomerAlreadyExists;
 
-#[AsCommand('bank:customer-register', description: 'Register customer(s)')]
+#[AsCommand('order:customer-register', description: 'Register customer')]
 final class RegisterCustomersCommand extends Command
 {
-    protected $signature = 'bank:customer-register
-                            { --num=1 : number of customer to register }';
+    protected $signature = 'order:customer-register { --count=1 }';
 
-    public function handle(): int
+    public function handle(CustomerSignUpService $signUpService): int
     {
-        $count = $num = (int) $this->option('num');
+        $count = $num = (int) $this->option('count');
 
-        $faker = Factory::create();
-
-        $validationFailed = 0;
-
-        /** @var CustomerRegistrationService $service */
-        $service = $this->laravel[CustomerRegistrationService::class];
-
-        try {
-            while ($num > 0) {
-                $id = Uuid::v4()->jsonSerialize();
-                $payload = [
-                    'id' => $id,
-                    'name' => $faker->name(),
-                    'email' => $id.'@gmail.com',
-                    'password' => $faker->password(8),
-                ];
-
-                try {
-                    $service->startCustomerRegistration($payload);
-                } catch (CustomerAlreadyExists) {
-                    // only when dispatch sync
-                    $validationFailed++;
-                }
-
-                $num--;
-            }
-
-            $this->info($count.' customer(s) registered');
-
-            if ($validationFailed > 0) {
-                $this->line($validationFailed.' customer(s) (at least) failed');
-            }
-        } catch (Throwable $exception) {
-            throw $exception;
+        while ($num != 0) {
+            $customerId = $this->signUp($signUpService);
+            $num--;
         }
 
+        $info = $count > 1 ? "$count Customers" : 'Customer with id '.$customerId;
+
+        $this->info($info.' registered');
+
         return self::SUCCESS;
+    }
+
+    private function signUp(CustomerSignUpService $signUpService): ?string
+    {
+        $payload = $this->factory();
+
+        $signUpService->start($payload);
+
+        return $payload['id'];
+    }
+
+    private function factory(): array
+    {
+        $id = Uuid::v4()->jsonSerialize();
+
+        return [
+            'id' => $id,
+            'name' => fake()->name(),
+            'email' => $id.'@gmail.com',
+            'password' => fake()->password(8),
+        ];
     }
 }

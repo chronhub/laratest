@@ -8,8 +8,8 @@ use BankRoute\Model\Customer\Customer;
 use BankRoute\Model\Customer\CustomerId;
 use BankRoute\Model\Customer\CustomerEmail;
 use Chronhub\Storm\Message\Attribute\AsHandler;
+use App\Report\Customer\Signup\RegisterCustomer;
 use BankRoute\Model\Customer\CustomerCollection;
-use App\Report\CustomerRegistration\RegisterCustomer;
 use BankRoute\Model\Customer\Service\UniqueCustomerEmail;
 use BankRoute\Model\Customer\Exception\CustomerAlreadyExists;
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace BankRoute\Model\Customer;
 
-use App\Testing\HasEnumStrings;
+use Chronhub\Storm\Support\HasEnumStrings;
 
 enum CustomerStatus: string
 {

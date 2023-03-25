@@ -67,12 +67,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/chronhub/larastorm.git",
-                "reference": "03deae11ddfb3da743009b959c231a089fdf80b8"
+                "reference": "688897b8e4b07a366a8aa5bffac9383595136eb5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/chronhub/larastorm/zipball/03deae11ddfb3da743009b959c231a089fdf80b8",
-                "reference": "03deae11ddfb3da743009b959c231a089fdf80b8",
+                "url": "https://api.github.com/repos/chronhub/larastorm/zipball/688897b8e4b07a366a8aa5bffac9383595136eb5",
+                "reference": "688897b8e4b07a366a8aa5bffac9383595136eb5",
                 "shasum": ""
             },
             "require": {
@@ -139,7 +139,7 @@
                 "issues": "https://github.com/chronhub/larastorm/issues",
                 "source": "https://github.com/chronhub/larastorm/tree/main"
             },
-            "time": "2023-03-15T12:58:14+00:00"
+            "time": "2023-03-15T15:32:21+00:00"
         },
         {
             "name": "chronhub/storm",
@@ -147,12 +147,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/chronhub/storm.git",
-                "reference": "119e2c052ffbf0a5be05c097ca64b3d38517991a"
+                "reference": "d2e717c557d66e519fad1452ec1e6353fe170b46"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/chronhub/storm/zipball/119e2c052ffbf0a5be05c097ca64b3d38517991a",
-                "reference": "119e2c052ffbf0a5be05c097ca64b3d38517991a",
+                "url": "https://api.github.com/repos/chronhub/storm/zipball/d2e717c557d66e519fad1452ec1e6353fe170b46",
+                "reference": "d2e717c557d66e519fad1452ec1e6353fe170b46",
                 "shasum": ""
             },
             "require": {
@@ -204,7 +204,7 @@
                 "issues": "https://github.com/chronhub/storm/issues",
                 "source": "https://github.com/chronhub/storm/tree/main"
             },
-            "time": "2023-03-14T16:54:04+00:00"
+            "time": "2023-03-15T17:52:52+00:00"
         },
         {
             "name": "composer/semver",
