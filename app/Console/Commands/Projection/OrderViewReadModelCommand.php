@@ -20,8 +20,9 @@ use BankRoute\Projection\Order\OrderViewReadModel;
 use BankRoute\Model\Order\Event\OrderItemQuantityDecreased;
 use BankRoute\Model\Order\Event\OrderItemQuantityIncreased;
 use Chronhub\Storm\Contracts\Projector\ProjectorServiceManager;
-use Chronhub\Storm\Contracts\Projector\ReadModelProjectorCaster;
+use Chronhub\Storm\Contracts\Projector\ReadModelCasterInterface;
 use Symfony\Component\Console\Command\SignalableCommandInterface;
+use Chronhub\Larastorm\Support\Contracts\ProjectionQueryScopeConnection;
 use function abs;
 use function pcntl_async_signals;
 
@@ -42,16 +43,19 @@ class OrderViewReadModelCommand extends Command implements SignalableCommandInte
 
         $projector = $manager->create($this->argument('projector'));
 
-        $this->projection = $projector->projectReadModel(
+        $this->projection = $projector->readModel(
             'order_view',
             $this->laravel[OrderViewReadModel::class]
         );
+
+        /** @var ProjectionQueryScopeConnection $queryScope */
+        $queryScope = $projector->queryScope();
 
         $this->projection
             ->initialize(fn (): array => ['in_progress' => 0, 'paid' => 0])
             ->fromStreams('order')
             ->whenAny($this->eventHandlers())
-            ->withQueryFilter($projector->queryScope()->fromIncludedPosition())
+            ->withQueryFilter($queryScope->fromIncludedPositionWithLimit(2000))
             ->run($this->option('in-background') === '1');
 
         return self::SUCCESS;
@@ -60,12 +64,12 @@ class OrderViewReadModelCommand extends Command implements SignalableCommandInte
     private function eventHandlers(): callable
     {
         return function (DomainEvent $event, array $state): array {
-            /** @var ReadModelProjectorCaster $this */
+            /** @var ReadModelCasterInterface $this */
             if ($event instanceof OrderCreated) {
                 $this->readModel()->stack('query', function (Builder $query, string $key, OrderCreated $event): void {
                     $query->insert([
                         $key => $event->orderId()->toString(),
-                        'customer_id' => $event->customerId(),
+                        'customer_id' => $event->customerId()->toString(),
                         'quantity' => $event->orderQuantity(),
                         'price' => $event->productPrice()->value,
                         'status' => $event->status()->value,

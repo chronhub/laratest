@@ -11,9 +11,9 @@ use Chronhub\Storm\Reporter\DomainEvent;
 use Chronhub\Larastorm\Support\Facade\Project;
 use Chronhub\Storm\Contracts\Projector\Projector;
 use BankRoute\Model\Customer\Event\CustomerRegistered;
-use Chronhub\Storm\Contracts\Projector\ProjectorManager;
 use Chronhub\Storm\Contracts\Projector\ProjectionQueryFilter;
-use Chronhub\Storm\Contracts\Projector\PersistentProjectorCaster;
+use Chronhub\Storm\Contracts\Projector\EmitterCasterInterface;
+use Chronhub\Storm\Contracts\Projector\ProjectorManagerInterface;
 use Symfony\Component\Console\Command\SignalableCommandInterface;
 use Chronhub\Larastorm\Support\Contracts\ProjectionQueryScopeConnection;
 use function str_starts_with;
@@ -36,7 +36,7 @@ final class PrimeCustomerProjectionCommand extends Command implements Signalable
 
         $projectorManager = Project::create($this->argument('projector'));
 
-        $this->projection = $projectorManager->projectProjection('customer_prime');
+        $this->projection = $projectorManager->emitter('customer_prime');
 
         $this->projection->initialize(fn (): array => ['count' => 0])
             ->withQueryFilter($this->queryFilter($projectorManager))
@@ -50,7 +50,7 @@ final class PrimeCustomerProjectionCommand extends Command implements Signalable
     private function eventHandlers(): Closure
     {
         return function (DomainEvent $event, array $state): array {
-            /** @var PersistentProjectorCaster $this */
+            /** @var EmitterCasterInterface $this */
             if ($event instanceof CustomerRegistered) {
                 $customerEmail = $event->customerEmail()->value;
 
@@ -65,7 +65,7 @@ final class PrimeCustomerProjectionCommand extends Command implements Signalable
         };
     }
 
-    private function queryFilter(ProjectorManager $manager): ProjectionQueryFilter
+    private function queryFilter(ProjectorManagerInterface $manager): ProjectionQueryFilter
     {
         $queryScope = $manager->queryScope();
 

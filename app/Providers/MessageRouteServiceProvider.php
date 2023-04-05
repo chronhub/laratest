@@ -71,7 +71,7 @@ class MessageRouteServiceProvider extends ServiceProvider
                     'name' => 'default',
                     'routes' => [
                         [RegisterCustomer::class, RegisterCustomerHandler::class],
-                        [StartOrder::class, StartOrderHandler::class],
+                        [StartOrder::class, StartOrderHandler::class, ['name' => 'orders']],
                         [CancelOrder::class, CancelOrderHandler::class],
                         [AddOrderItem::class, AddOrderItemHandler::class, ['name' => 'orders']],
                         [RemoveOrderItem::class, RemoveOrderItemHandler::class, ['name' => 'orders']],
@@ -87,7 +87,7 @@ class MessageRouteServiceProvider extends ServiceProvider
                     'name' => 'default',
                     'routes' => [
                         [CustomerSignupStarted::class, CustomerRegistrationProcess::class],
-                        [CustomerRegistered::class, CustomerRegistrationProcess::class],
+                        [CustomerRegistered::class, CreateOrderOnCustomerRegistration::class],
                         [AuthUserCreated::class, CustomerRegistrationProcess::class],
                         [CustomerSignupCompleted::class, [
                             SendActivationEmailOnSignUpCompleted::class,
@@ -151,8 +151,8 @@ class MessageRouteServiceProvider extends ServiceProvider
     {
         if ($group instanceof CommandGroup) {
             $group
-                ->withHandlerMethod('command')
                 ->withStrategy(ProducerStrategy::ASYNC->value)
+                ->withHandlerMethod('command')
                 ->withSubscribers(
                     ConsumeCommand::class,
                     HandleTransactionalDomainCommand::class,

@@ -16,20 +16,20 @@ use BankRoute\Model\Customer\CustomerCollection;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Events\StatementPrepared;
 use Chronhub\Storm\Contracts\Chronicler\Chronicler;
-use Chronhub\Larastorm\Projection\ProjectionProvider;
+use Chronhub\Larastorm\Projection\ConnectionProvider;
 use Chronhub\Storm\Contracts\Reporter\ReporterManager;
 use Chronhub\Storm\Publisher\EventPublisherSubscriber;
 use BankRoute\Model\Customer\Service\UniqueCustomerEmail;
 use Chronhub\Storm\Contracts\Chronicler\StreamSubscriber;
 use Chronhub\Larastorm\Providers\LaraStormServiceProvider;
 use Chronhub\Storm\Contracts\Chronicler\ChroniclerManager;
+use Chronhub\Storm\Contracts\Projector\ProjectionProvider;
 use Chronhub\Storm\Support\Bridge\MakeCausationDomainCommand;
 use BankRoute\Infrastructure\Service\UniqueCustomerEmailFromRead;
 use BankRoute\Infrastructure\Repository\OrderEventStoreRepository;
 use Chronhub\Storm\Contracts\Aggregate\AggregateRepositoryManager;
 use BankRoute\Infrastructure\Repository\CustomerEventStoreRepository;
 use Chronhub\Storm\Contracts\Chronicler\TransactionalEventableChronicler;
-use Chronhub\Storm\Contracts\Projector\ProjectionProvider as ProvideProjection;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -45,8 +45,8 @@ class AppServiceProvider extends ServiceProvider
         $this->registerAggregateRepositories();
         $this->registerAggregateServices();
 
-        $this->app->singleton('projector.projection_provider.pgsql', function (Application $app): ProvideProjection {
-            return new ProjectionProvider($app['db']->connection('pgsql'));
+        $this->app->singleton('projector.projection_provider.pgsql', function (Application $app): ProjectionProvider {
+            return new ConnectionProvider($app['db']->connection('pgsql'));
         });
 
         $this->app->singleton(MakeCausationDomainCommand::class);
@@ -79,7 +79,7 @@ class AppServiceProvider extends ServiceProvider
 
     private function registerEventPublisher(): void
     {
-        $this->app->bind(EventPublisherSubscriber::class, function (Application $app): StreamSubscriber {
+        $this->app->singleton(EventPublisherSubscriber::class, function (Application $app): StreamSubscriber {
             return new EventPublisherSubscriber(
                 new PublishEvent($app[ReportEvent::class])
             );

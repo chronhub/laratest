@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace BankRoute\ProcessManager;
 
 use App\Services\OrderService;
-use App\Report\Customer\Signup\CustomerSignupCompleted;
+use BankRoute\Model\Customer\Event\CustomerRegistered;
 
 final readonly class CreateOrderOnCustomerRegistration
 {
@@ -13,8 +13,8 @@ final readonly class CreateOrderOnCustomerRegistration
     {
     }
 
-    public function onEvent(CustomerSignupCompleted $event): void
+    public function onEvent(CustomerRegistered $event): void
     {
-        $this->orderService->createOrder($event->content['id']);
+        $this->orderService->createOrder($event->aggregateId()->toString());
     }
 }

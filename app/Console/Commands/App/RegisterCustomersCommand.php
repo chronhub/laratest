@@ -7,6 +7,8 @@ namespace App\Console\Commands\App;
 use Illuminate\Console\Command;
 use Symfony\Component\Uid\Uuid;
 use App\Services\CustomerSignUpService;
+use Chronhub\Larastorm\Support\Facade\Report;
+use App\Report\Customer\Signup\RegisterCustomer;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand('order:customer-register', description: 'Register customer')]
@@ -16,6 +18,27 @@ final class RegisterCustomersCommand extends Command
 
     public function handle(CustomerSignUpService $signUpService): int
     {
+        $count = $num = (int) $this->option('count');
+
+        while ($num != 0) {
+            $factory = $this->factory();
+
+            Report::command()->relay(
+                RegisterCustomer::fromContent([
+                    'customer_id' => $factory['id'],
+                    'customer_name' => $factory['name'],
+                    'customer_email' => $factory['email'],
+                ])
+            );
+            $num--;
+        }
+
+        $info = $count > 1 ? "$count Customers" : 'Customer with id '.$factory['id'];
+
+        $this->info($info.' registered');
+
+        return self::SUCCESS;
+
         $count = $num = (int) $this->option('count');
 
         while ($num != 0) {

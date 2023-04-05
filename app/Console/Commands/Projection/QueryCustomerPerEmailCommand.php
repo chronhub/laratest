@@ -7,9 +7,9 @@ namespace App\Console\Commands\Projection;
 use Illuminate\Console\Command;
 use Illuminate\Database\Query\Builder;
 use Chronhub\Larastorm\Support\Facade\Project;
+use Chronhub\Storm\Contracts\Projector\QueryCaster;
 use Chronhub\Storm\Contracts\Chronicler\QueryFilter;
 use BankRoute\Model\Customer\Event\CustomerRegistered;
-use Chronhub\Storm\Contracts\Projector\ReadModelProjectorCaster;
 
 final class QueryCustomerPerEmailCommand extends Command
 {
@@ -19,13 +19,13 @@ final class QueryCustomerPerEmailCommand extends Command
     {
         $email = $this->argument('email');
 
-        $query = Project::create('emit')->projectQuery();
+        $query = Project::create('emit')->query();
 
         $query
             ->initialize(fn (): array => ['found' => false])
             ->fromStreams('customer')
             ->whenAny(function (CustomerRegistered $event, array $state) use ($email): array {
-                /** @var ReadModelProjectorCaster $this */
+                /** @var QueryCaster $this */
                 if ($event->customerEmail()->value === $email) {
                     $state['found'] = true;
 

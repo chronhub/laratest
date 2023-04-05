@@ -28,8 +28,8 @@ return [
         'provider' => 'connection',
         'event_stream_provider' => [],
         'providers' => [
-            'connection' => \Chronhub\Larastorm\EventStore\EventStoreConnectionProvider::class,
-            'in_memory' => \Chronhub\Storm\Chronicler\InMemory\InMemoryChroniclerProvider::class,
+            'connection' => \Chronhub\Larastorm\EventStore\EventStoreConnectionFactory::class,
+            'in_memory' => \Chronhub\Storm\Chronicler\InMemory\InMemoryChroniclerFactory::class,
         ],
     ],
 
@@ -96,7 +96,7 @@ return [
          * In memory driver keys are predefined
          * If you need your own in memory instance
          *      extend the manager
-         *      or make your own chronicler provider
+         *      or make your own factory
          */
         'in_memory' => [
 

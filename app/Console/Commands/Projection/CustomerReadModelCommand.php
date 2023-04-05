@@ -14,8 +14,9 @@ use Chronhub\Larastorm\Support\Facade\Project;
 use Chronhub\Storm\Contracts\Projector\Projector;
 use BankRoute\Projection\Customer\CustomerReadModel;
 use BankRoute\Model\Customer\Event\CustomerRegistered;
-use Chronhub\Storm\Contracts\Projector\ReadModelProjectorCaster;
+use Chronhub\Storm\Contracts\Projector\ReadModelCasterInterface;
 use Symfony\Component\Console\Command\SignalableCommandInterface;
+use Chronhub\Larastorm\Support\Contracts\ProjectionQueryScopeConnection;
 use function pcntl_async_signals;
 
 final class CustomerReadModelCommand extends Command implements SignalableCommandInterface
@@ -35,15 +36,18 @@ final class CustomerReadModelCommand extends Command implements SignalableComman
 
         $projectorManager = Project::create($this->argument('projector'));
 
-        $this->projection = $projectorManager->projectReadModel(
+        $this->projection = $projectorManager->readModel(
             'customer',
             $this->laravel[CustomerReadModel::class]
         );
 
+        /** @var ProjectionQueryScopeConnection $queryScope */
+        $queryScope = $projectorManager->queryScope();
+
         $this->projection->initialize(fn (): array => ['count' => 0])
             ->fromStreams('customer', 'order')
             ->whenAny($this->eventHandlers())
-            ->withQueryFilter($projectorManager->queryScope()->fromIncludedPosition())
+            ->withQueryFilter($queryScope->fromIncludedPositionWithLimit(2000))
             ->run($this->option('in-background') === '1');
 
         return self::SUCCESS;
@@ -52,7 +56,7 @@ final class CustomerReadModelCommand extends Command implements SignalableComman
     private function eventHandlers(): callable
     {
         return function (DomainEvent $event, array $state): array {
-            /** @var ReadModelProjectorCaster $this */
+            /** @var ReadModelCasterInterface $this */
             if ($event instanceof CustomerRegistered) {
                 $this->readModel()->stack('query', function (Builder $query, string $key, CustomerRegistered $event): void {
                     $query->insert([
@@ -64,6 +68,8 @@ final class CustomerReadModelCommand extends Command implements SignalableComman
                 }, $event);
 
                 $state['count']++;
+
+                return $state;
             }
 
             if ($event instanceof OrderCreated) {
@@ -74,8 +80,6 @@ final class CustomerReadModelCommand extends Command implements SignalableComman
                             'current_order_id' => $event->orderId()->toString(),
                         ]);
                 }, $event);
-
-                $state['count']++;
             }
 
             return $state;

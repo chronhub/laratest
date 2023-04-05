@@ -18,7 +18,7 @@ use Chronhub\Storm\Contracts\Projector\Projector;
 use BankRoute\Projection\Order\OrderDetailReadModel;
 use BankRoute\Model\Order\Event\OrderItemQuantityDecreased;
 use BankRoute\Model\Order\Event\OrderItemQuantityIncreased;
-use Chronhub\Storm\Contracts\Projector\ReadModelProjectorCaster;
+use Chronhub\Storm\Contracts\Projector\ReadModelCasterInterface;
 use function abs;
 use function pcntl_async_signals;
 
@@ -39,7 +39,7 @@ class OrderDetailReadModelCommand extends Command
 
         $projectorManager = Project::create($this->argument('projector'));
 
-        $this->projection = $projectorManager->projectReadModel(
+        $this->projection = $projectorManager->readModel(
             'order_detail',
             $this->laravel[OrderDetailReadModel::class]
         );
@@ -56,7 +56,7 @@ class OrderDetailReadModelCommand extends Command
     private function eventHandlers(): callable
     {
         return function (DomainEvent $event, array $state): array {
-            /** @var ReadModelProjectorCaster $this */
+            /** @var ReadModelCasterInterface $this */
             if ($event instanceof OrderItemAdded
                 || $event instanceof OrderItemQuantityIncreased
                 || $event instanceof OrderItemQuantityDecreased) {

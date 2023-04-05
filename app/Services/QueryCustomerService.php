@@ -6,7 +6,6 @@ namespace App\Services;
 
 use BankRoute\PromiseHandler;
 use Chronhub\Storm\Reporter\ReportQuery;
-use Chronhub\Larastorm\Support\Facade\Report;
 use BankRoute\Projection\Customer\CustomerModel;
 use BankRoute\Model\Customer\Query\GetCustomerById;
 
@@ -22,6 +21,6 @@ final readonly class QueryCustomerService
     {
         $query = GetCustomerById::fromContent(['customer_id' => $customerId]);
 
-        return $this->handlePromise(Report::query()->relay($query));
+        return $this->handlePromise($this->reportQuery->relay($query));
     }
 }

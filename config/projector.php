@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Chronhub\Storm\Contracts\Projector\ProjectorOption;
+use Chronhub\Storm\Contracts\Projector\ProjectionOption;
 
 return [
 
@@ -23,7 +23,7 @@ return [
         //            'name' => 'pgsql',
         //            'table' => 'projections',
         //        ],
-        'in_memory' => \Chronhub\Storm\Projector\Provider\InMemoryProjectionProvider::class,
+        'in_memory' => \Chronhub\Storm\Projector\InMemoryProjectionProvider::class,
     ],
 
     /*
@@ -89,36 +89,36 @@ return [
         'default' => [],
 
         'lazy' => [
-            ProjectorOption::SIGNAL => true,
-            ProjectorOption::LOCKOUT => 1000000,
-            ProjectorOption::SLEEP => 10000,
-            ProjectorOption::TIMEOUT => 10000,
-            ProjectorOption::BLOCK_SIZE => 1000,
-            ProjectorOption::RETRIES => '50, 2000, 50',
-            ProjectorOption::DETECTION_WINDOWS => null,
+            ProjectionOption::SIGNAL => true,
+            ProjectionOption::LOCKOUT => 500000,
+            ProjectionOption::SLEEP => 10000,
+            ProjectionOption::TIMEOUT => 10000,
+            ProjectionOption::BLOCK_SIZE => 1000,
+            ProjectionOption::RETRIES => '50, 2000, 50',
+            ProjectionOption::DETECTION_WINDOWS => null,
         ],
 
         'emit_slow' => [
-            ProjectorOption::SIGNAL => true,
-            ProjectorOption::LOCKOUT => 500000,
-            ProjectorOption::SLEEP => 100000,
-            ProjectorOption::TIMEOUT => 100000,
-            ProjectorOption::BLOCK_SIZE => 1000,
-            ProjectorOption::RETRIES => [],
-            ProjectorOption::DETECTION_WINDOWS => null,
+            ProjectionOption::SIGNAL => true,
+            ProjectionOption::LOCKOUT => 500000,
+            ProjectionOption::SLEEP => 100000,
+            ProjectionOption::TIMEOUT => 100000,
+            ProjectionOption::BLOCK_SIZE => 1000,
+            ProjectionOption::RETRIES => [],
+            ProjectionOption::DETECTION_WINDOWS => null,
         ],
 
         'reset' => [
-            ProjectorOption::SIGNAL => true,
-            ProjectorOption::LOCKOUT => 500000,
-            ProjectorOption::SLEEP => 0,
-            ProjectorOption::TIMEOUT => 0,
-            ProjectorOption::BLOCK_SIZE => 1000,
-            ProjectorOption::RETRIES => [],
-            ProjectorOption::DETECTION_WINDOWS => 'PT1H',
+            ProjectionOption::SIGNAL => true,
+            ProjectionOption::LOCKOUT => 500000,
+            ProjectionOption::SLEEP => 0,
+            ProjectionOption::TIMEOUT => 0,
+            ProjectionOption::BLOCK_SIZE => 1000,
+            ProjectionOption::RETRIES => [],
+            ProjectionOption::DETECTION_WINDOWS => 'PT1H',
         ],
 
-        'in_memory' => \Chronhub\Storm\Projector\Options\InMemoryProjectorOption::class,
+        'in_memory' => \Chronhub\Storm\Projector\Options\InMemoryProjectionOption::class,
 
         'snapshot' => [],
     ],
