@@ -10,7 +10,7 @@ use BankRoute\Model\Order\Event\OrderCreated;
 use BankRoute\Model\Order\Event\OrderCanceled;
 use Chronhub\Larastorm\Support\Facade\Project;
 use BankRoute\Model\Order\Event\OrderItemAdded;
-use Chronhub\Storm\Contracts\Projector\QueryCaster;
+use Chronhub\Storm\Contracts\Projector\QueryCasterInterface;
 use BankRoute\Model\Order\Event\OrderItemQuantityDecreased;
 use BankRoute\Model\Order\Event\OrderItemQuantityIncreased;
 
@@ -28,7 +28,7 @@ final class QueryFirstPendingOrderWithAtLeastFiveInQuantityCommand extends Comma
             ->initialize(fn (): array => ['orders' => [], 'found' => null])
             ->fromStreams('order')
             ->whenAny(function (DomainEvent $event, array $state): array {
-                /** @var QueryCaster $this */
+                /** @var QueryCasterInterface $this */
                 if ($event instanceof OrderCreated) {
                     $state['orders'] += [$event->orderId()->toString() => 0];
 

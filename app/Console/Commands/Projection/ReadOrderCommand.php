@@ -13,7 +13,7 @@ use BankRoute\Model\Order\Event\OrderCanceled;
 use BankRoute\Model\Order\Event\OrderItemAdded;
 use BankRoute\Model\Order\Event\OrderItemRemoved;
 use Chronhub\Storm\Contracts\Projector\Projector;
-use Chronhub\Storm\Contracts\Projector\QueryCaster;
+use Chronhub\Storm\Contracts\Projector\QueryCasterInterface;
 use BankRoute\Model\Order\Event\OrderItemQuantityDecreased;
 use BankRoute\Model\Order\Event\OrderItemQuantityIncreased;
 use Chronhub\Storm\Contracts\Projector\ProjectorServiceManager;
@@ -67,7 +67,7 @@ final class ReadOrderCommand extends Command implements SignalableCommandInterfa
                 return $state;
             }
 
-            /** @var QueryCaster $this */
+            /** @var QueryCasterInterface $this */
             if ($event->orderId()->toString() !== $orderId) {
                 return $state;
             }

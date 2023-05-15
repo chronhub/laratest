@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Console\Commands\Projection;
 
+use Chronhub\Storm\Contracts\Projector\QueryCasterInterface;
 use Illuminate\Console\Command;
 use Illuminate\Database\Query\Builder;
 use Chronhub\Larastorm\Support\Facade\Project;
-use Chronhub\Storm\Contracts\Projector\QueryCaster;
 use Chronhub\Storm\Contracts\Chronicler\QueryFilter;
 use BankRoute\Model\Customer\Event\CustomerRegistered;
 
@@ -25,7 +25,7 @@ final class QueryCustomerPerEmailCommand extends Command
             ->initialize(fn (): array => ['found' => false])
             ->fromStreams('customer')
             ->whenAny(function (CustomerRegistered $event, array $state) use ($email): array {
-                /** @var QueryCaster $this */
+                /** @var QueryCasterInterface $this */
                 if ($event->customerEmail()->value === $email) {
                     $state['found'] = true;
 
