@@ -8,9 +8,10 @@ use JsonSerializable;
 
 final readonly class Product implements JsonSerializable
 {
-    public function __construct(public ProductId $id,
-                                public ProductUnitPrice $price,
-                                public ProductName $name)
+    public function __construct(
+        public ProductId $id,
+        public ProductUnitPrice $price,
+        public ProductName $name)
     {
     }
 

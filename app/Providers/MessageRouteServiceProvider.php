@@ -12,11 +12,9 @@ use App\Report\Order\CancelOrder;
 use Chronhub\Storm\Routing\Group;
 use App\Report\Order\AddOrderItem;
 use App\Report\Order\RemoveOrderItem;
-use Chronhub\Storm\Routing\EventGroup;
-use Chronhub\Storm\Routing\QueryGroup;
+use Chronhub\Storm\Reporter\DomainType;
 use Illuminate\Support\ServiceProvider;
 use BankRoute\Model\Product\GetProducts;
-use Chronhub\Storm\Routing\CommandGroup;
 use BankRoute\Model\Order\Event\OrderPaid;
 use BankRoute\Model\Order\Event\OrderCreated;
 use BankRoute\Model\Order\Query\GetOrderById;
@@ -71,11 +69,11 @@ class MessageRouteServiceProvider extends ServiceProvider
                     'name' => 'default',
                     'routes' => [
                         [RegisterCustomer::class, RegisterCustomerHandler::class],
-                        [StartOrder::class, StartOrderHandler::class, ['name' => 'orders']],
+                        [StartOrder::class, StartOrderHandler::class],
                         [CancelOrder::class, CancelOrderHandler::class],
-                        [AddOrderItem::class, AddOrderItemHandler::class, ['name' => 'orders']],
-                        [RemoveOrderItem::class, RemoveOrderItemHandler::class, ['name' => 'orders']],
-                        [DecreaseOrderItemQuantity::class, DecreaseOrderItemQuantityHandler::class, ['name' => 'orders', 'delay' => 5, 'backoff' => 5]],
+                        [AddOrderItem::class, AddOrderItemHandler::class],
+                        [RemoveOrderItem::class, RemoveOrderItemHandler::class],
+                        [DecreaseOrderItemQuantity::class, DecreaseOrderItemQuantityHandler::class, ['delay' => 5, 'backoff' => 5]],
                         [PayOrder::class, PayOrderHandler::class],
                     ],
                     'queue' => ['connection' => 'redis', 'name' => 'default', 'timeout' => 10],
@@ -124,7 +122,7 @@ class MessageRouteServiceProvider extends ServiceProvider
 
     public function register(): void
     {
-        $this->app->resolving(Registrar::class, function (Registrar $router) {
+        $this->app->resolving(Registrar::class, function (Registrar $router): void {
             $this->registerRoutes($router);
         });
     }
@@ -149,7 +147,7 @@ class MessageRouteServiceProvider extends ServiceProvider
 
     protected function configDefaultGroup(Group $group, array $queue = []): Group
     {
-        if ($group instanceof CommandGroup) {
+        if ($group->getType() === DomainType::COMMAND) {
             $group
                 ->withStrategy(ProducerStrategy::ASYNC->value)
                 ->withHandlerMethod('command')
@@ -160,14 +158,14 @@ class MessageRouteServiceProvider extends ServiceProvider
                 );
         }
 
-        if ($group instanceof EventGroup) {
+        if ($group->getType() === DomainType::EVENT) {
             $group
                 ->withStrategy(ProducerStrategy::PER_MESSAGE->value)
                 ->withHandlerMethod('onEvent')
                 ->withSubscribers(ConsumeEvent::class);
         }
 
-        if ($group instanceof QueryGroup) {
+        if ($group->getType() === DomainType::QUERY) {
             $group
                 ->withStrategy(ProducerStrategy::SYNC->value)
                 ->withHandlerMethod('query')

@@ -4,68 +4,53 @@ declare(strict_types=1);
 
 namespace App\Console\Commands\Projection;
 
+use Closure;
 use Illuminate\Console\Command;
-use Illuminate\Database\Query\Builder;
 use Chronhub\Storm\Reporter\DomainEvent;
-use Chronhub\Larastorm\Support\Facade\Clock;
-use Chronhub\Storm\Contracts\Message\Header;
 use BankRoute\Model\Order\Event\OrderCreated;
-use Chronhub\Larastorm\Support\Facade\Project;
 use Chronhub\Storm\Contracts\Projector\Projector;
 use BankRoute\Projection\Customer\CustomerReadModel;
 use BankRoute\Model\Customer\Event\CustomerRegistered;
+use Chronhub\Storm\Contracts\Projector\ProjectorServiceManager;
 use Chronhub\Storm\Contracts\Projector\ReadModelCasterInterface;
 use Symfony\Component\Console\Command\SignalableCommandInterface;
-use Chronhub\Larastorm\Support\Contracts\ProjectionQueryScopeConnection;
-use function pcntl_async_signals;
 
 final class CustomerReadModelCommand extends Command implements SignalableCommandInterface
 {
+    use ProvideProjectorOptionCommand;
+
     private Projector $projection;
 
     protected $signature = 'project:customer
                             { projector=default  : projector name }
+                            { limit=1000         : query filter with limit default 1000 or zero for no limit }
                             { --signal=1         : dispatch async signal }
                             { --in-background=1  : run in background }';
 
-    public function handle(): int
+    public function handle(ProjectorServiceManager $serviceManager, CustomerReadModel $readModel): int
     {
-        if ($this->option('signal') === '1') {
-            pcntl_async_signals(true);
-        }
+        $projectorManager = $serviceManager->create($this->argument('projector'));
 
-        $projectorManager = Project::create($this->argument('projector'));
+        $this->projection = $projectorManager->readModel('customer', $readModel);
 
-        $this->projection = $projectorManager->readModel(
-            'customer',
-            $this->laravel[CustomerReadModel::class]
-        );
+        $this->registerSignalHandler();
 
-        /** @var ProjectionQueryScopeConnection $queryScope */
-        $queryScope = $projectorManager->queryScope();
-
-        $this->projection->initialize(fn (): array => ['count' => 0])
+        $this->projection
+            ->initialize(fn (): array => ['count' => 0])
             ->fromStreams('customer', 'order')
             ->whenAny($this->eventHandlers())
-            ->withQueryFilter($queryScope->fromIncludedPositionWithLimit(2000))
-            ->run($this->option('in-background') === '1');
+            ->withQueryFilter($this->queryWithLimit($projectorManager))
+            ->run($this->keepRunning());
 
         return self::SUCCESS;
     }
 
-    private function eventHandlers(): callable
+    private function eventHandlers(): Closure
     {
         return function (DomainEvent $event, array $state): array {
             /** @var ReadModelCasterInterface $this */
             if ($event instanceof CustomerRegistered) {
-                $this->readModel()->stack('query', function (Builder $query, string $key, CustomerRegistered $event): void {
-                    $query->insert([
-                        $key => $event->aggregateId()->toString(),
-                        'email' => $event->customerEmail()->value,
-                        'status' => $event->customerStatus()->value,
-                        'created_at' => Clock::format($event->header(Header::EVENT_TIME)),
-                    ]);
-                }, $event);
+                $this->readModel()->stack('recordCustomer', $event);
 
                 $state['count']++;
 
@@ -73,26 +58,10 @@ final class CustomerReadModelCommand extends Command implements SignalableComman
             }
 
             if ($event instanceof OrderCreated) {
-                $this->readModel()->stack('query', function (Builder $query, string $key, OrderCreated $event): void {
-                    $query
-                        ->where($key, $event->customerId()->toString())
-                        ->update([
-                            'current_order_id' => $event->orderId()->toString(),
-                        ]);
-                }, $event);
+                $this->readModel()->stack('updateCustomerOrder', $event);
             }
 
             return $state;
         };
-    }
-
-    public function getSubscribedSignals(): array
-    {
-        return [SIGINT, SIGTERM];
-    }
-
-    public function handleSignal(int $signal): void
-    {
-        $this->projection->stop();
     }
 }

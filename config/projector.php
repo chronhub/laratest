@@ -19,7 +19,7 @@ return [
 
     'providers' => [
         'connection' => 'projector.projection_provider.pgsql',
-        //        'connection' => [
+        //        [
         //            'name' => 'pgsql',
         //            'table' => 'projections',
         //        ],
@@ -45,7 +45,7 @@ return [
 
             'default' => [
                 'chronicler' => ['connection', 'write'],
-                'options' => 'lazy',
+                'options' => 'default',
                 'provider' => 'connection',
                 'scope' => \Chronhub\Larastorm\Projection\ConnectionQueryScope::class,
             ],
@@ -86,14 +86,22 @@ return [
 
     'options' => [
 
-        'default' => [],
+        'default' => [
+            ProjectionOption::SIGNAL => true,
+            ProjectionOption::LOCKOUT => 1000,
+            ProjectionOption::SLEEP => 1000,
+            ProjectionOption::TIMEOUT => 1000,
+            ProjectionOption::BLOCK_SIZE => 500,
+            ProjectionOption::RETRIES => '50, 2000, 50',
+            ProjectionOption::DETECTION_WINDOWS => null,
+        ],
 
         'lazy' => [
             ProjectionOption::SIGNAL => true,
             ProjectionOption::LOCKOUT => 500000,
-            ProjectionOption::SLEEP => 10000,
+            ProjectionOption::SLEEP => 100000,
             ProjectionOption::TIMEOUT => 10000,
-            ProjectionOption::BLOCK_SIZE => 1000,
+            ProjectionOption::BLOCK_SIZE => 500,
             ProjectionOption::RETRIES => '50, 2000, 50',
             ProjectionOption::DETECTION_WINDOWS => null,
         ],
@@ -101,8 +109,8 @@ return [
         'emit_slow' => [
             ProjectionOption::SIGNAL => true,
             ProjectionOption::LOCKOUT => 500000,
-            ProjectionOption::SLEEP => 100000,
-            ProjectionOption::TIMEOUT => 100000,
+            ProjectionOption::SLEEP => 10000,
+            ProjectionOption::TIMEOUT => 10000,
             ProjectionOption::BLOCK_SIZE => 1000,
             ProjectionOption::RETRIES => [],
             ProjectionOption::DETECTION_WINDOWS => null,
@@ -142,6 +150,9 @@ return [
             \Chronhub\Larastorm\Support\Console\Generator\MakeQueryProjectionCommand::class,
             \Chronhub\Larastorm\Support\Supervisor\Command\SuperviseProjectionCommand::class,
             \Chronhub\Larastorm\Support\Supervisor\Command\CheckSupervisedProjectionStatusCommand::class,
+            \Chronhub\Larastorm\Support\Console\Edges\ProjectAllStreamCommand::class,
+            \Chronhub\Larastorm\Support\Console\Edges\ProjectStreamCategoryCommand::class,
+            \Chronhub\Larastorm\Support\Console\Edges\ProjectMessageNameCommand::class,
         ],
     ],
 ];

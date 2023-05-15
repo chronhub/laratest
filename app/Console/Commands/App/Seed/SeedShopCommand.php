@@ -9,12 +9,13 @@ use BankRoute\Projection\Customer\CustomerModel;
 
 final class SeedShopCommand extends Command
 {
-    protected $signature = 'order:seed';
+    protected $signature = 'order:seed {--count=1000}';
 
     public function handle(): int
     {
-        // todo query model
-        $customers = CustomerModel::all();
+        $limit = (int) $this->option('count');
+
+        $customers = CustomerModel::limit($limit)->inRandomOrder()->cursor();
 
         $customers->each(function (CustomerModel $customer) {
             $this->callSilent('order:place', ['order' => $customer->getCurrentOrderId()]);

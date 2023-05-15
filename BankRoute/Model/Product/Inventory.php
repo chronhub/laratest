@@ -15,11 +15,12 @@ final readonly class Inventory implements Countable
 
     public function __construct()
     {
-        $this->products = collect($this->getList())->map(fn ($product) => new Product(
-            ProductId::fromString($product['id']),
-            new ProductUnitPrice($product['price']),
-            new ProductName('Product '.explode('-', $product['id'])[0])
-        ));
+        $this->products = collect($this->getList())->map(
+            fn (array $product) => Product::fromValues(
+                $product['id'],
+                $product['price'],
+                explode('-', $product['id'])[0]
+            ));
     }
 
     public function getProduct(ProductId $productId): Product

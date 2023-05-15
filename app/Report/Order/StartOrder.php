@@ -7,10 +7,7 @@ namespace App\Report\Order;
 use Chronhub\Storm\Reporter\DomainCommand;
 use Chronhub\Storm\Contracts\Message\AsyncMessage;
 use Chronhub\Storm\Message\HasConstructableContent;
-use BankRoute\Model\Order\Handler\StartOrderHandler;
-use Chronhub\Storm\Message\Attribute\AsDomainCommand;
 
-#[AsDomainCommand(['order_id', 'customer_id'], 'command', StartOrderHandler::class)]
 class StartOrder extends DomainCommand implements AsyncMessage
 {
     use HasConstructableContent;

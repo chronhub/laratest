@@ -86,7 +86,7 @@ return [
     */
 
     'waits' => [
-        'redis:default' => 60,
+        'redis:default' => 3600,
     ],
 
     /*
@@ -155,7 +155,7 @@ return [
     |
     */
 
-    'fast_termination' => false,
+    'fast_termination' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -168,7 +168,7 @@ return [
     |
     */
 
-    'memory_limit' => 1024,
+    'memory_limit' => 4096,
 
     /*
     |--------------------------------------------------------------------------
@@ -186,22 +186,11 @@ return [
             'connection' => 'redis',
             'queue' => ['default'],
             'balance' => 'auto',
+            'autoScalingStrategy' => 'time',
             'maxProcesses' => 1,
             'maxTime' => 0,
-            'maxJobs' => 0,
-            'memory' => 1024,
-            'tries' => 1,
-            'timeout' => 15,
-            'nice' => 0,
-        ],
-        'supervisor-2' => [
-            'connection' => 'redis',
-            'queue' => ['orders'],
-            'balance' => 'auto',
-            'maxProcesses' => 1,
-            'maxTime' => 0,
-            'maxJobs' => 0,
-            'memory' => 1024,
+            'maxJobs' => 1000,
+            'memory' => 4096,
             'tries' => 1,
             'timeout' => 15,
             'nice' => 0,
@@ -222,9 +211,6 @@ return [
                 'maxProcesses' => 5,
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
-            ],
-            'supervisor-2' => [
-                'maxProcesses' => 5,
             ],
         ],
     ],

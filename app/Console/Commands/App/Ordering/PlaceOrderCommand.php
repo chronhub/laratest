@@ -46,7 +46,7 @@ class PlaceOrderCommand extends Command
     {
         $products = [];
 
-        $add = rand(1, 10);
+        $add = rand(1, 5);
 
         while ($add !== 0) {
             $product = $this->randomProduct();

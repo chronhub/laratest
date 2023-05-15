@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Console\Commands\App;
 
 use Illuminate\Console\Command;
-use Illuminate\Database\Connection;
 use Symfony\Component\Console\Attribute\AsCommand;
 use function getenv;
 use function is_string;
@@ -29,8 +28,9 @@ class ResetShopAppCommand extends Command
             return self::FAILURE;
         }
 
-        $this->getConnection()->getSchemaBuilder()->dropAllTables();
+        $this->dropAllTables();
 
+        // call migrate with env
         $this->call('migrate');
 
         foreach ($this->streams as $stream) {
@@ -40,9 +40,10 @@ class ResetShopAppCommand extends Command
         return self::SUCCESS;
     }
 
-    protected function getConnection(): Connection
+    protected function dropAllTables(): void
     {
-        return $this->laravel['db']->connection(getenv('DB_CONNECTION', true));
+        $this->laravel['db']->connection('pgsql')->getSchemaBuilder()->dropAllTables();
+        //$this->laravel['db']->connection('mysql')->getSchemaBuilder()->dropAllTables();
     }
 
     protected function isResetConfirmed(): bool

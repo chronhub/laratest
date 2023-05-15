@@ -16,15 +16,17 @@ use BankRoute\Model\Order\Event\OrderItemAdded;
 use BankRoute\Model\Order\Event\OrderItemRemoved;
 use BankRoute\Model\Order\Concerns\ApplyOrderEvent;
 use Chronhub\Storm\Aggregate\HasAggregateBehaviour;
-use Chronhub\Storm\Contracts\Aggregate\AggregateRoot;
 use Chronhub\Storm\Contracts\Aggregate\AggregateIdentity;
 use BankRoute\Model\Order\Event\OrderItemQuantityDecreased;
 use BankRoute\Model\Order\Event\OrderItemQuantityIncreased;
+use Chronhub\Storm\Snapshot\ReconstituteAggregateFromSnapshot;
+use Chronhub\Storm\Contracts\Aggregate\AggregateRootWithSnapshotting;
 use function abs;
 
-final class Order implements AggregateRoot
+final class Order implements AggregateRootWithSnapshotting
 {
     use HasAggregateBehaviour;
+    use ReconstituteAggregateFromSnapshot;
     use ApplyOrderEvent;
 
     protected CustomerId $customerId;

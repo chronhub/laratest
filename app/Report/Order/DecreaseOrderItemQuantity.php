@@ -6,10 +6,7 @@ namespace App\Report\Order;
 
 use Chronhub\Storm\Reporter\DomainCommand;
 use Chronhub\Storm\Message\HasConstructableContent;
-use Chronhub\Storm\Message\Attribute\AsDomainCommand;
-use BankRoute\Model\Order\Handler\DecreaseOrderItemQuantityHandler;
 
-#[AsDomainCommand(['order_id', 'product_id', 'product_price'], 'command', DecreaseOrderItemQuantityHandler::class)]
 class DecreaseOrderItemQuantity extends DomainCommand
 {
     use HasConstructableContent;

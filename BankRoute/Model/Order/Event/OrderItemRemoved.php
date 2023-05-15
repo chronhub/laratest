@@ -4,15 +4,12 @@ declare(strict_types=1);
 
 namespace BankRoute\Model\Order\Event;
 
-use BankRoute\Model\Order\Order;
 use BankRoute\Model\Order\OrderId;
 use BankRoute\Model\Product\ProductId;
 use Chronhub\Storm\Reporter\DomainEvent;
 use BankRoute\Model\Product\ProductUnitPrice;
 use Chronhub\Storm\Message\HasConstructableContent;
-use Chronhub\Storm\Aggregate\Attribute\AsAggregateChanged;
 
-#[AsAggregateChanged(Order::class, 'order_id', ['order_id', 'product_id', 'product_quantity', 'product_price'])]
 class OrderItemRemoved extends DomainEvent
 {
     use HasConstructableContent;

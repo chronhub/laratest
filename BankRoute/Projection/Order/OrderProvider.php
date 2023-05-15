@@ -23,8 +23,7 @@ final readonly class OrderProvider
         return $this->model
             ->newQuery()
             ->with('details')
-            ->where('order_id', $orderId)
-            ->first();
+            ->find($orderId);
     }
 
     public function fullPendingOrders(): Enumerable

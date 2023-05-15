@@ -26,7 +26,12 @@ return [
 
     'defaults' => [
         'provider' => 'connection',
-        'event_stream_provider' => [],
+        'event_stream_provider' => [
+            'connection' => [
+                'name' => 'pgsql',
+                'table_name' => 'event_streams',
+            ],
+        ],
         'providers' => [
             'connection' => \Chronhub\Larastorm\EventStore\EventStoreConnectionFactory::class,
             'in_memory' => \Chronhub\Storm\Chronicler\InMemory\InMemoryChroniclerFactory::class,

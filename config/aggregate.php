@@ -13,9 +13,6 @@ return [
         'repositories' => [
 
             'customer' => [
-                'type' => [
-                    'alias' => 'generic',
-                ],
                 'chronicler' => \Chronhub\Storm\Contracts\Chronicler\Chronicler::class,
                 'strategy' => 'single',
                 'aggregate_type' => \BankRoute\Model\Customer\Customer::class,
@@ -27,9 +24,6 @@ return [
             ],
 
             'order' => [
-                'type' => [
-                    'alias' => 'generic',
-                ],
                 'chronicler' => \Chronhub\Storm\Contracts\Chronicler\Chronicler::class,
                 'strategy' => 'single',
                 'aggregate_type' => \BankRoute\Model\Order\Order::class,
@@ -38,6 +32,7 @@ return [
                     'driver' => 'redis',
                 ],
                 'event_decorators' => [],
+                //'use_snapshot' => 'connection',
             ],
         ],
     ],

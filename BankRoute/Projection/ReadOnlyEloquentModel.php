@@ -17,6 +17,8 @@ abstract class ReadOnlyEloquentModel extends Model
 
     protected $fillable = [];
 
+    //protected $connection = 'pgsql';
+
     public function save(array $options = []): bool
     {
         throw new LogicException('Model is read only');

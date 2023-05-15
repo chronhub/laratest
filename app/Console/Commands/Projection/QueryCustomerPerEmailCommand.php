@@ -13,7 +13,7 @@ use BankRoute\Model\Customer\Event\CustomerRegistered;
 
 final class QueryCustomerPerEmailCommand extends Command
 {
-    protected $signature = 'bank:query-customer-per-email { email : customer email }';
+    protected $signature = 'order:query-customer-per-email { email : customer email }';
 
     public function handle(): int
     {

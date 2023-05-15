@@ -16,10 +16,12 @@ use BankRoute\Model\Customer\CustomerCollection;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Events\StatementPrepared;
 use Chronhub\Storm\Contracts\Chronicler\Chronicler;
+use BankRoute\Projection\Customer\CustomerReadModel;
 use Chronhub\Larastorm\Projection\ConnectionProvider;
 use Chronhub\Storm\Contracts\Reporter\ReporterManager;
 use Chronhub\Storm\Publisher\EventPublisherSubscriber;
 use BankRoute\Model\Customer\Service\UniqueCustomerEmail;
+use Chronhub\Larastorm\Providers\SnapshotServiceProvider;
 use Chronhub\Storm\Contracts\Chronicler\StreamSubscriber;
 use Chronhub\Larastorm\Providers\LaraStormServiceProvider;
 use Chronhub\Storm\Contracts\Chronicler\ChroniclerManager;
@@ -27,7 +29,7 @@ use Chronhub\Storm\Contracts\Projector\ProjectionProvider;
 use Chronhub\Storm\Support\Bridge\MakeCausationDomainCommand;
 use BankRoute\Infrastructure\Service\UniqueCustomerEmailFromRead;
 use BankRoute\Infrastructure\Repository\OrderEventStoreRepository;
-use Chronhub\Storm\Contracts\Aggregate\AggregateRepositoryManager;
+use Chronhub\Larastorm\Support\Contracts\AggregateRepositoryManager;
 use BankRoute\Infrastructure\Repository\CustomerEventStoreRepository;
 use Chronhub\Storm\Contracts\Chronicler\TransactionalEventableChronicler;
 
@@ -38,6 +40,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->register(LaraStormServiceProvider::class);
         $this->app->register(MessageRouteServiceProvider::class);
         $this->app->register(SupervisorProjectorServiceProvider::class);
+        $this->app->register(SnapshotServiceProvider::class);
 
         $this->registerDefaultReporters();
         $this->registerEventPublisher();
@@ -45,11 +48,21 @@ class AppServiceProvider extends ServiceProvider
         $this->registerAggregateRepositories();
         $this->registerAggregateServices();
 
-        $this->app->singleton('projector.projection_provider.pgsql', function (Application $app): ProjectionProvider {
-            return new ConnectionProvider($app['db']->connection('pgsql'));
-        });
+        $this->app->singleton(
+            'projector.projection_provider.pgsql',
+            fn (Application $app): ProjectionProvider => new ConnectionProvider($app['db']->connection('pgsql'))
+        );
+
+        $this->app->singleton(
+            'projector.projection_provider.mysql',
+            fn (Application $app): ProjectionProvider => new ConnectionProvider($app['db']->connection('mysql'))
+        );
 
         $this->app->singleton(MakeCausationDomainCommand::class);
+
+        //        $this->app->when(CustomerReadModel::class)
+        //            ->needs('$connection')
+        //            ->give('mysql');
     }
 
     public function boot(): void

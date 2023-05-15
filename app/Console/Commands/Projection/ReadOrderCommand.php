@@ -13,9 +13,9 @@ use BankRoute\Model\Order\Event\OrderCanceled;
 use BankRoute\Model\Order\Event\OrderItemAdded;
 use BankRoute\Model\Order\Event\OrderItemRemoved;
 use Chronhub\Storm\Contracts\Projector\Projector;
+use Chronhub\Storm\Contracts\Projector\QueryCaster;
 use BankRoute\Model\Order\Event\OrderItemQuantityDecreased;
 use BankRoute\Model\Order\Event\OrderItemQuantityIncreased;
-use Chronhub\Storm\Contracts\Projector\QueryProjectorCaster;
 use Chronhub\Storm\Contracts\Projector\ProjectorServiceManager;
 use Symfony\Component\Console\Command\SignalableCommandInterface;
 use function usleep;
@@ -37,7 +37,7 @@ final class ReadOrderCommand extends Command implements SignalableCommandInterfa
 
         $projector = $manager->create('emit');
 
-        $this->projection = $projector->projectQuery();
+        $this->projection = $projector->query();
 
         $this->projection
             ->initialize(fn (): array => ['found' => false])
@@ -67,7 +67,7 @@ final class ReadOrderCommand extends Command implements SignalableCommandInterfa
                 return $state;
             }
 
-            /** @var QueryProjectorCaster $this */
+            /** @var QueryCaster $this */
             if ($event->orderId()->toString() !== $orderId) {
                 return $state;
             }

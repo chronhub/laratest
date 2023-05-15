@@ -6,12 +6,42 @@ namespace BankRoute\Projection\Order;
 
 use BankRoute\Projection\ReadModelTable;
 use Illuminate\Database\Schema\Blueprint;
-use Chronhub\Larastorm\Support\ReadModel\InteractWithBuilder;
-use Chronhub\Larastorm\Support\ReadModel\ReadModelConnection;
+use Chronhub\Larastorm\Support\Facade\Clock;
+use Chronhub\Storm\Contracts\Message\Header;
+use BankRoute\Model\Order\Event\OrderCanceled;
+use BankRoute\Model\Order\Event\OrderItemAdded;
+use BankRoute\Model\Order\Event\OrderItemRemoved;
+use BankRoute\Model\Order\Event\OrderItemQuantityDecreased;
+use BankRoute\Model\Order\Event\OrderItemQuantityIncreased;
+use Chronhub\Larastorm\Support\ReadModel\AbstractQueryModelConnection;
 
-class OrderDetailReadModel extends ReadModelConnection
+class OrderDetailReadModel extends AbstractQueryModelConnection
 {
-    use InteractWithBuilder;
+    protected function recordOrderItem(OrderItemAdded|OrderItemQuantityIncreased|OrderItemQuantityDecreased $event): void
+    {
+        $this->insert(
+            [
+                'order_id' => $event->orderId()->toString(),
+                'product_id' => $event->productId(),
+                'quantity' => $event->productQuantity(),
+                'price' => $event->productPrice()->value,
+                'created_at' => Clock::format($event->header(Header::EVENT_TIME)),
+            ]
+        );
+    }
+
+    protected function removeOrderItem(OrderItemRemoved $event): void
+    {
+        $this->query()
+            ->where('order_id', $event->orderId()->toString())
+            ->where('product_id', $event->productId())
+            ->delete();
+    }
+
+    protected function cancelOrder(OrderCanceled $event): void
+    {
+        $this->query()->where('order_id', $event->orderId()->toString())->delete();
+    }
 
     protected function up(): callable
     {
