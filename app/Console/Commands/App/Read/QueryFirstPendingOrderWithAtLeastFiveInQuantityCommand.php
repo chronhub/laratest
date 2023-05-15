@@ -10,9 +10,9 @@ use BankRoute\Model\Order\Event\OrderCreated;
 use BankRoute\Model\Order\Event\OrderCanceled;
 use Chronhub\Larastorm\Support\Facade\Project;
 use BankRoute\Model\Order\Event\OrderItemAdded;
-use Chronhub\Storm\Contracts\Projector\QueryCasterInterface;
 use BankRoute\Model\Order\Event\OrderItemQuantityDecreased;
 use BankRoute\Model\Order\Event\OrderItemQuantityIncreased;
+use Chronhub\Storm\Contracts\Projector\QueryCasterInterface;
 
 final class QueryFirstPendingOrderWithAtLeastFiveInQuantityCommand extends Command
 {

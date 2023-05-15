@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Console\Commands\Projection;
 
-use Chronhub\Storm\Contracts\Projector\QueryCasterInterface;
 use Illuminate\Console\Command;
 use Illuminate\Database\Query\Builder;
 use Chronhub\Larastorm\Support\Facade\Project;
 use Chronhub\Storm\Contracts\Chronicler\QueryFilter;
 use BankRoute\Model\Customer\Event\CustomerRegistered;
+use Chronhub\Storm\Contracts\Projector\QueryCasterInterface;
 
 final class QueryCustomerPerEmailCommand extends Command
 {
