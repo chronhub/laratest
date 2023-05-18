@@ -24,7 +24,7 @@ class OrderViewReadModelCommand extends Command implements SignalableCommandInte
 {
     use ProvideProjectorOptionCommand;
 
-    private Projector $projection;
+    protected Projector $projection;
 
     protected $signature = 'project:order-view
                             { projector=default  : projector name }

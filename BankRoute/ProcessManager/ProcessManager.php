@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace BankRoute\ProcessManager;
 
-use Chronhub\Storm\Clock\PointInTime;
 use Illuminate\Database\Eloquent\Model;
 use Chronhub\Larastorm\Support\Facade\Clock;
 use function is_array;
@@ -29,7 +28,7 @@ class ProcessManager extends Model
             'prefix' => $prefix,
             'process_id' => $processId,
             'next_event' => $nextEvent,
-            'created_at' => Clock::now()->format(Clock::getFormat()),
+            'created_at' => Clock::nowToString(),
             'extra' => serialize($extra),
         ];
 
@@ -44,7 +43,7 @@ class ProcessManager extends Model
 
         $toUpdate = [
             'next_event' => $nextEvent,
-            'updated_at' => (new PointInTime())->now()->format(PointInTime::DATE_TIME_FORMAT),
+            'updated_at' => Clock::nowToString(),
             'extra' => serialize($extra),
         ];
 

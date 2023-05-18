@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace BankRoute\Model\Product;
 
 use Countable;
-use OutOfRangeException;
 use Illuminate\Support\Collection;
 use function explode;
 
@@ -23,10 +22,10 @@ final readonly class Inventory implements Countable
             ));
     }
 
-    public function getProduct(ProductId $productId): Product
+    public function getProduct(ProductId $productId): ?Product
     {
         if (! $this->hasProduct($productId)) {
-            throw new OutOfRangeException('Product not found');
+            return null;
         }
 
         return $this->products->first(fn (Product $product) => $product->id->sameValueAs($productId));

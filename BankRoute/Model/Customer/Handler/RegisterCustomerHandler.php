@@ -14,16 +14,17 @@ use BankRoute\Model\Customer\Exception\CustomerAlreadyExists;
 
 final readonly class RegisterCustomerHandler
 {
-    public function __construct(private CustomerCollection $customers,
-        private UniqueCustomerEmail $uniqueCustomerEmail)
-    {
+    public function __construct(
+        private CustomerCollection $customers,
+        private UniqueCustomerEmail $uniqueCustomerEmail
+    ) {
     }
 
     public function command(RegisterCustomer $command): void
     {
         $accountId = CustomerId::fromString($command->content['customer_id']);
 
-        if (null !== $this->customers->get($accountId)) {
+        if ($this->customers->get($accountId) !== null) {
             throw CustomerAlreadyExists::withId($accountId);
         }
 

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace BankRoute\Model\Order\Handler;
 
-use Exception;
 use App\Report\Order\StartOrder;
 use BankRoute\Model\Order\Order;
 use BankRoute\Model\Order\OrderId;
 use BankRoute\Model\Customer\CustomerId;
 use BankRoute\Model\Order\Service\OrderList;
+use BankRoute\Model\Order\Exceptions\OrderAlreadyExists;
 
 final readonly class StartOrderHandler
 {
@@ -24,7 +24,7 @@ final readonly class StartOrderHandler
         $order = $this->orderList->get($orderId);
 
         if ($order !== null) {
-            throw new Exception('Order already exists');
+            throw OrderAlreadyExists::withOrderId($orderId);
         }
 
         $order = Order::create($orderId, CustomerId::fromString($command->customerId()));

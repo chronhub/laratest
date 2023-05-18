@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace BankRoute\Model\Order\Handler;
 
-use RuntimeException;
-use BankRoute\Model\Order\Order;
 use App\Report\Order\CancelOrder;
 use BankRoute\Model\Order\OrderId;
 use BankRoute\Model\Order\Service\OrderList;
+use BankRoute\Model\Order\Exceptions\OrderNotFound;
 
 final readonly class CancelOrderHandler
 {
@@ -22,8 +21,8 @@ final readonly class CancelOrderHandler
 
         $order = $this->orderList->get($orderId);
 
-        if (! $order instanceof Order) {
-            throw new RuntimeException("Order $orderId not found");
+        if ($order === null) {
+            throw OrderNotFound::withOrderId($orderId);
         }
 
         $order->cancel();

@@ -11,10 +11,11 @@ final readonly class PlusOneItem extends OrderItem
 {
     public int $quantity;
 
-    public function __construct(public OrderId $orderId,
-                                public ProductId $productId,
-                                public ProductUnitPrice $price)
-    {
+    public function __construct(
+        public OrderId $orderId,
+        public ProductId $productId,
+        public ProductUnitPrice $price
+    ) {
         $this->quantity = 1;
     }
 }

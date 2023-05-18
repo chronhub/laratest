@@ -23,7 +23,7 @@ class OrderDetailReadModelCommand extends Command implements SignalableCommandIn
 {
     use ProvideProjectorOptionCommand;
 
-    private Projector $projection;
+    protected Projector $projection;
 
     protected $signature = 'project:order-detail
                             { projector=default  : projector name }

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace BankRoute\Model\Order\Handler;
 
-use Exception;
 use App\Report\Order\PayOrder;
 use BankRoute\Model\Order\OrderId;
 use BankRoute\Model\Order\Service\OrderList;
+use BankRoute\Model\Order\Exceptions\OrderNotFound;
 
 final readonly class PayOrderHandler
 {
@@ -22,7 +22,7 @@ final readonly class PayOrderHandler
         $order = $this->orderList->get($orderId);
 
         if ($order === null) {
-            throw new Exception('Order not found');
+            throw OrderNotFound::withOrderId($orderId);
         }
 
         $order->pay();

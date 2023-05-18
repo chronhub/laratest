@@ -104,6 +104,8 @@ final class ReadOrderCommand extends Command implements SignalableCommandInterfa
 
             if ($event instanceof OrderCanceled) {
                 $print("Order $orderId canceled");
+
+                $this->stop();
             }
 
             if ($event instanceof OrderPaid) {

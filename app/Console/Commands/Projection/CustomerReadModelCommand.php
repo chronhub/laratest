@@ -19,7 +19,7 @@ final class CustomerReadModelCommand extends Command implements SignalableComman
 {
     use ProvideProjectorOptionCommand;
 
-    private Projector $projection;
+    protected Projector $projection;
 
     protected $signature = 'project:customer
                             { projector=default  : projector name }

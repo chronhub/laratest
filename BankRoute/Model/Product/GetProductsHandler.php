@@ -14,8 +14,6 @@ final readonly class GetProductsHandler
 
     public function query(GetProducts $query, Deferred $promise): void
     {
-        $promise->resolve(
-            $this->inventory->getProducts()
-        );
+        $promise->resolve($this->inventory->getProducts());
     }
 }

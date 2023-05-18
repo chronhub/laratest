@@ -18,11 +18,12 @@ readonly class CustomerRegistrationProcess
 {
     final public const CUSTOMER_REGISTRATION = 'pm-customer-registration';
 
-    public function __construct(private UserRepository $userRepository,
-                                private RedisProcessManager $processManager,
-                                private ReportCommand $reportCommand,
-                                private ReportEvent $reportEvent)
-    {
+    public function __construct(
+        private UserRepository $userRepository,
+        private RedisProcessManager $processManager,
+        private ReportCommand $reportCommand,
+        private ReportEvent $reportEvent
+    ) {
     }
 
     public function onEvent(DomainEvent $event): void

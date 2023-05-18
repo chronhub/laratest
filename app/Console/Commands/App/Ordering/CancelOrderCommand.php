@@ -20,7 +20,7 @@ final class CancelOrderCommand extends Command
         $order = $queryOrder->getOrderById($this->argument('order'));
 
         if ($order === null) {
-            $this->warn('Order not found');
+            $this->error('Order not found');
 
             return self::FAILURE;
         }

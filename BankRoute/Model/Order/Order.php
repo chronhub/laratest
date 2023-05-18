@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace BankRoute\Model\Order;
 
-use OutOfRangeException;
 use BankRoute\Model\Product\Product;
 use BankRoute\Model\Product\ProductId;
 use BankRoute\Model\Customer\CustomerId;
@@ -19,6 +18,9 @@ use Chronhub\Storm\Aggregate\HasAggregateBehaviour;
 use Chronhub\Storm\Contracts\Aggregate\AggregateIdentity;
 use BankRoute\Model\Order\Event\OrderItemQuantityDecreased;
 use BankRoute\Model\Order\Event\OrderItemQuantityIncreased;
+use BankRoute\Model\Order\Exceptions\ProductNotFoundInOrder;
+use BankRoute\Model\Order\Exceptions\OrderQuantityOutOfBounds;
+use BankRoute\Model\Order\Exceptions\UnableToChangeOrderState;
 use Chronhub\Storm\Snapshot\ReconstituteAggregateFromSnapshot;
 use Chronhub\Storm\Contracts\Aggregate\AggregateRootWithSnapshotting;
 use function abs;
@@ -122,7 +124,10 @@ final class Order implements AggregateRootWithSnapshotting
     public function pay(): void
     {
         $this->ensureOrderCanBeModified();
-        $this->ensureOrderIsNotEmpty();
+
+        if ($this->items->totalQuantity() < 1) {
+            throw OrderQuantityOutOfBounds::canNotBeEmpty($this->orderId(), $this->status);
+        }
 
         $this->recordThat(OrderPaid::fromContent(
             [
@@ -164,21 +169,14 @@ final class Order implements AggregateRootWithSnapshotting
     private function ensureProductExists(ProductId $productId): void
     {
         if (! $this->items->hasProduct($productId)) {
-            throw new OutOfRangeException('Product does not exist in order');
+            throw ProductNotFoundInOrder::withProductId($this->orderId(), $productId);
         }
     }
 
     private function ensureOrderCanBeModified(): void
     {
         if ($this->status !== OrderState::Pending && $this->status !== OrderState::Modified) {
-            throw new OutOfRangeException('Order cannot be modified');
-        }
-    }
-
-    private function ensureOrderIsNotEmpty(): void
-    {
-        if ($this->items->totalQuantity() < 1) {
-            throw new OutOfRangeException('Order quantity cannot be empty');
+            throw UnableToChangeOrderState::withOrder($this->orderId(), $this->status);
         }
     }
 
@@ -187,7 +185,9 @@ final class Order implements AggregateRootWithSnapshotting
         $quantity = $this->items->quantityOfProduct($item->productId);
 
         if ($quantity === false || $quantity < abs($item->quantity)) {
-            throw new OutOfRangeException('Product quantity to remove, is greater than quantity of product in order');
+            throw OrderQuantityOutOfBounds::quantityOfProductCanNotBeDecreased(
+                $this->orderId(), $item->productId, $quantity, abs($item->quantity)
+            );
         }
     }
 }

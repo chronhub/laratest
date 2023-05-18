@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace BankRoute\Model\Customer;
 
-use RuntimeException;
 use Chronhub\Storm\Aggregate\HasAggregateBehaviour;
 use BankRoute\Model\Customer\Event\CustomerActivated;
 use Chronhub\Storm\Contracts\Aggregate\AggregateRoot;
 use BankRoute\Model\Customer\Event\CustomerRegistered;
+use BankRoute\Model\Customer\Exception\CustomerViolation;
 use Chronhub\Storm\Contracts\Aggregate\AggregateIdentity;
 
 final class Customer implements AggregateRoot
@@ -35,7 +35,7 @@ final class Customer implements AggregateRoot
     public function markAsActivated(): void
     {
         if ($this->status !== CustomerStatus::Registered) {
-            throw new RuntimeException('Invalid current customer status');
+            throw CustomerViolation::unableToActivate($this->customerId(), $this->status);
         }
 
         $this->recordThat(CustomerActivated::fromContent([
@@ -45,7 +45,7 @@ final class Customer implements AggregateRoot
         ]));
     }
 
-    public function id(): CustomerId|AggregateIdentity
+    public function customerId(): CustomerId|AggregateIdentity
     {
         return $this->aggregateId;
     }

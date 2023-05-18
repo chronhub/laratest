@@ -30,6 +30,7 @@ use App\Report\Customer\Signup\RegisterCustomer;
 use BankRoute\Model\Order\Event\OrderItemRemoved;
 use BankRoute\Model\Order\Query\GetFullOrderById;
 use BankRoute\Model\Order\Handler\PayOrderHandler;
+use App\Testing\StopPropagationOnTimeoutSubscriber;
 use BankRoute\Model\Customer\Query\GetCustomerById;
 use BankRoute\ProcessManager\RenewOrderOnOrderPaid;
 use BankRoute\Model\Order\Handler\StartOrderHandler;
@@ -76,7 +77,7 @@ class MessageRouteServiceProvider extends ServiceProvider
                         [DecreaseOrderItemQuantity::class, DecreaseOrderItemQuantityHandler::class, ['delay' => 5, 'backoff' => 5]],
                         [PayOrder::class, PayOrderHandler::class],
                     ],
-                    'queue' => ['connection' => 'redis', 'name' => 'default', 'timeout' => 10],
+                    'queue' => ['connection' => 'rabbitmq', 'name' => 'default', 'timeout' => 10],
                 ],
             ],
 
@@ -100,7 +101,7 @@ class MessageRouteServiceProvider extends ServiceProvider
                         [OrderItemQuantityDecreased::class],
                         [OrderPaid::class, RenewOrderOnOrderPaid::class],
                     ],
-                    'queue' => ['connection' => 'redis', 'name' => 'default', 'timeout' => 10],
+                    'queue' => ['connection' => 'rabbitmq', 'name' => 'default', 'timeout' => 10],
                 ],
             ],
 
@@ -155,6 +156,7 @@ class MessageRouteServiceProvider extends ServiceProvider
                     ConsumeCommand::class,
                     HandleTransactionalDomainCommand::class,
                     MakeCausationDomainCommand::class,
+                    StopPropagationOnTimeoutSubscriber::class,
                 );
         }
 

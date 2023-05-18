@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace BankRoute\Model\Customer\Handler;
 
-use BankRoute\Model\Customer\Customer;
 use BankRoute\Model\Customer\CustomerId;
 use App\Report\Customer\Signup\ActivateCustomer;
 use BankRoute\Model\Customer\CustomerCollection;
@@ -20,10 +19,9 @@ final readonly class ActivateCustomerHandler
     {
         $accountId = CustomerId::fromString($command->content['customer_id']);
 
-        /** @var Customer|null $customer */
         $customer = $this->customers->get($accountId);
 
-        if (null === $customer) {
+        if ($customer === null) {
             throw CustomerNotFound::withId($accountId);
         }
 

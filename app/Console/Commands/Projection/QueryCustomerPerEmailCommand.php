@@ -10,6 +10,7 @@ use Chronhub\Larastorm\Support\Facade\Project;
 use Chronhub\Storm\Contracts\Chronicler\QueryFilter;
 use BankRoute\Model\Customer\Event\CustomerRegistered;
 use Chronhub\Storm\Contracts\Projector\QueryCasterInterface;
+use function filter_var;
 
 final class QueryCustomerPerEmailCommand extends Command
 {
@@ -18,6 +19,12 @@ final class QueryCustomerPerEmailCommand extends Command
     public function handle(): int
     {
         $email = $this->argument('email');
+
+        if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+            $this->error("Invalid email $email");
+
+            return 0;
+        }
 
         $query = Project::create('emit')->query();
 
