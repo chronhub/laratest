@@ -89,6 +89,7 @@ return [
                 ],
                 'queue' => [
                     'job' => \App\Queue\RabbitMQJob::class,
+                    'exchange_routing_key' => '%s',
                 ],
             ],
 

@@ -26,13 +26,15 @@
         "laravel/sail": "^1.18",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^7.5",
-        "phpunit/phpunit": "^10.1",
-        "spatie/laravel-ignition": "^2.1",
-        "phpstan/phpstan":"^1.10",
         "nunomaduro/larastan": "^2.5",
         "orchestra/testbench": "8.*",
+        "pestphp/pest": "^2.6",
+        "pestphp/pest-plugin-laravel": "^2.0",
+        "phpstan/phpstan": "^1.10",
+        "phpunit/phpunit": "^10.1",
+        "rector/rector": "dev-main",
         "roave/security-advisories": "dev-latest",
-        "rector/rector": "dev-main"
+        "spatie/laravel-ignition": "^2.1"
     },
     "autoload": {
         "psr-4": {

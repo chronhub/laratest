@@ -17,7 +17,7 @@ trait PromiseHandler
             function ($value) use (&$result) {
                 $result = $value;
             },
-            function ($reason) use (&$result, &$exception) {
+            function ($reason) use (&$exception) {
                 $exception = $reason;
             }
         );
@@ -26,6 +26,6 @@ trait PromiseHandler
             throw $exception;
         }
 
-        return $result;
+        return $exception ?? $result;
     }
 }

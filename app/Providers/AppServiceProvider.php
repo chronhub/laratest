@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use PDO;
+use App\Api\ApiChronicler;
+use App\Api\ApiStreamEventLoader;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Chronhub\Storm\Reporter\ReportEvent;
@@ -44,7 +46,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->registerDefaultReporters();
         $this->registerEventPublisher();
-        $this->registerDefaultWriteChronicler();
+        $this->registerDefaultChronicler();
         $this->registerAggregateRepositories();
         $this->registerAggregateServices();
 
@@ -79,6 +81,8 @@ class AppServiceProvider extends ServiceProvider
             fn (Application $app): ReportCommand => $app[ReporterManager::class]->command()
         );
 
+        $this->app->alias(ReportCommand::class, 'reporter.command.default');
+
         $this->app->singleton(
             ReportEvent::class,
             fn (Application $app): ReportEvent => $app[ReporterManager::class]->event()
@@ -99,12 +103,20 @@ class AppServiceProvider extends ServiceProvider
         });
     }
 
-    private function registerDefaultWriteChronicler(): void
+    private function registerDefaultChronicler(): void
     {
         $this->app->bind(Chronicler::class, function (Application $app): TransactionalEventableChronicler {
             return $app[ChroniclerManager::class]
                 ->setDefaultDriver('connection')
                 ->create('write');
+        });
+
+        $this->app->bind('chronicler.api.read', function (Application $app): Chronicler {
+            $chronicler = $app[ChroniclerManager::class]
+                ->setDefaultDriver('connection')
+                ->create('read');
+
+            return new ApiChronicler($chronicler, $app[ApiStreamEventLoader::class]);
         });
     }
 

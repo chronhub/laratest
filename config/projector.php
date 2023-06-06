@@ -63,6 +63,20 @@ return [
                 'provider' => 'connection',
                 'scope' => \Chronhub\Larastorm\Projection\ConnectionQueryScope::class,
             ],
+
+            'api_order' => [
+                'chronicler' => 'chronicler.api.read',
+                'options' => 'lazy',
+                'provider' => 'connection',
+                'scope' => \App\Api\OrderProjectionQueryScope::class,
+            ],
+            'api_customer' => [
+                'chronicler' => 'chronicler.api.read',
+                'options' => 'lazy',
+                'provider' => 'connection',
+                'scope' => \App\Api\CustomerProjectionQueryScope::class,
+            ],
+
         ],
 
         'in_memory' => [
@@ -98,10 +112,10 @@ return [
 
         'lazy' => [
             ProjectionOption::SIGNAL => true,
-            ProjectionOption::LOCKOUT => 500000,
-            ProjectionOption::SLEEP => 100000,
+            ProjectionOption::LOCKOUT => 5000000,
+            ProjectionOption::SLEEP => 1000000,
             ProjectionOption::TIMEOUT => 10000,
-            ProjectionOption::BLOCK_SIZE => 500,
+            ProjectionOption::BLOCK_SIZE => 1000,
             ProjectionOption::RETRIES => '50, 2000, 50',
             ProjectionOption::DETECTION_WINDOWS => null,
         ],

@@ -166,6 +166,11 @@ final class Order implements AggregateRootWithSnapshotting
         return $this->customerId;
     }
 
+    public function state(): OrderState
+    {
+        return $this->status;
+    }
+
     private function ensureProductExists(ProductId $productId): void
     {
         if (! $this->items->hasProduct($productId)) {

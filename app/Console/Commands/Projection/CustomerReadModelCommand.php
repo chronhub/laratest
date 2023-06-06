@@ -7,6 +7,7 @@ namespace App\Console\Commands\Projection;
 use Closure;
 use Illuminate\Console\Command;
 use Chronhub\Storm\Reporter\DomainEvent;
+use App\Api\ApiCustomersFromIncludedPosition;
 use BankRoute\Model\Order\Event\OrderCreated;
 use Chronhub\Storm\Contracts\Projector\Projector;
 use BankRoute\Projection\Customer\CustomerReadModel;
@@ -22,7 +23,7 @@ final class CustomerReadModelCommand extends Command implements SignalableComman
     protected Projector $projection;
 
     protected $signature = 'project:customer
-                            { projector=default  : projector name }
+                            { projector=api_customer      : projector name }
                             { limit=1000         : query filter with limit default 1000 or zero for no limit }
                             { --signal=1         : dispatch async signal }
                             { --in-background=1  : run in background }';
@@ -39,7 +40,7 @@ final class CustomerReadModelCommand extends Command implements SignalableComman
             ->initialize(fn (): array => ['count' => 0])
             ->fromStreams('customer', 'order')
             ->whenAny($this->eventHandlers())
-            ->withQueryFilter($this->queryWithLimit($projectorManager))
+            ->withQueryFilter(new ApiCustomersFromIncludedPosition())
             ->run($this->keepRunning());
 
         return self::SUCCESS;

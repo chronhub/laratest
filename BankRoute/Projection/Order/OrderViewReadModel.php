@@ -20,7 +20,7 @@ use BankRoute\Model\Order\Event\OrderItemQuantityIncreased;
 use Chronhub\Larastorm\Support\ReadModel\AbstractQueryModelConnection;
 use function abs;
 
-class OrderViewReadModel extends AbstractQueryModelConnection
+final class OrderViewReadModel extends AbstractQueryModelConnection
 {
     protected function createOrder(OrderCreated $event): void
     {

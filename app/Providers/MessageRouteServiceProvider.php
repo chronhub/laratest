@@ -156,7 +156,7 @@ class MessageRouteServiceProvider extends ServiceProvider
                     ConsumeCommand::class,
                     HandleTransactionalDomainCommand::class,
                     MakeCausationDomainCommand::class,
-                    StopPropagationOnTimeoutSubscriber::class,
+                    // StopPropagationOnTimeoutSubscriber::class,
                 );
         }
 

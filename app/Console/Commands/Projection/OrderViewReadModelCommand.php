@@ -6,6 +6,7 @@ namespace App\Console\Commands\Projection;
 
 use Illuminate\Console\Command;
 use Chronhub\Storm\Reporter\DomainEvent;
+use App\Api\ApiOrdersFromIncludedPosition;
 use BankRoute\Model\Order\Event\OrderPaid;
 use BankRoute\Model\Order\Event\OrderCreated;
 use BankRoute\Model\Order\Event\OrderCanceled;
@@ -27,7 +28,7 @@ class OrderViewReadModelCommand extends Command implements SignalableCommandInte
     protected Projector $projection;
 
     protected $signature = 'project:order-view
-                            { projector=default  : projector name }
+                            { projector=api_order      : projector name }
                             { limit=1000         : query filter with limit default 1000 or zero for no limit }
                             { --signal=1         : dispatch async signal }
                             { --in-background=1  : run in background }';
@@ -44,7 +45,7 @@ class OrderViewReadModelCommand extends Command implements SignalableCommandInte
             ->initialize(fn (): array => ['in_progress' => 0, 'paid' => 0])
             ->fromStreams('order')
             ->whenAny($this->eventHandlers())
-            ->withQueryFilter($this->queryWithLimit($projector))
+            ->withQueryFilter(new ApiOrdersFromIncludedPosition())
             ->run($this->keepRunning());
 
         return self::SUCCESS;

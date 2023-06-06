@@ -4,80 +4,81 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
 use BankRoute\Model\Order\OrderId;
 use BankRoute\Model\Order\OrderItems;
 use BankRoute\Model\Order\PlusOneItem;
+use BankRoute\Model\Product\ProductId;
 use BankRoute\Model\Order\MinusOneItem;
+use BankRoute\Model\Product\ProductUnitPrice;
 
-class OrderItemCollectionTest extends TestCase
-{
-    public function testQuantityOfProduct(): void
-    {
-        $items = new OrderItems();
-        $this->assertFalse($items->hasProduct('1'));
+it('create new order items collection', function (ProductId $productId): void {
+    $items = new OrderItems();
 
-        $orderId = OrderId::create();
-        $productId = '1';
+    expect($items)->toBeInstanceOf(OrderItems::class)->toHaveProperty('items')
+        ->and($items->totalQuantity())->toBe(0)
+        ->and($items->totalPrice())->toBe(0.00)
+        ->and($items->hasProduct($productId))->toBeFalse();
+})->with('productId');
 
-        $items->add(new PlusOneItem($orderId, $productId, 1.00));
-        $items->add(new PlusOneItem($orderId, $productId, 1.00));
-        $items->add(new PlusOneItem($orderId, $productId, 1.00));
-        $items->add(new PlusOneItem($orderId, $productId, 1.00));
+it('add new product', function (OrderId $orderId, ProductId $productId): void {
+    $items = new OrderItems();
 
-        $this->assertEquals(4, $items->quantityOfProduct($productId));
-        $this->assertEquals(4.0, $items->totalPrice());
-    }
+    $productPrice = new ProductUnitPrice(10.00);
+    $addItem = new PlusOneItem($orderId, $productId, $productPrice);
 
-    public function testRemoveProduct(): void
-    {
-        $items = new OrderItems();
-        $this->assertEquals(0, $items->quantityOfProduct('0'));
-        $this->assertFalse($items->hasProduct('1'));
-        $this->assertFalse($items->hasProduct('2'));
+    $items->add($addItem);
 
-        $orderId = OrderId::create();
-        $product1 = '1';
-        $product2 = '2';
+    expect($items->totalQuantity())->toBe(1)
+        ->and($items->totalPrice())->toBe(10.00)
+        ->and($items->hasProduct($productId))->toBeTrue();
+})->with('orderId', 'productId');
 
-        $items->add(new PlusOneItem($orderId, $product1, 1.00));
-        $items->add(new PlusOneItem($orderId, $product1, 1.00));
-        $items->decreaseQuantity(new MinusOneItem($orderId, $product1, 1.00));
-        $items->decreaseQuantity(new MinusOneItem($orderId, $product1, 1.00));
-        $items->add(new PlusOneItem($orderId, $product2, 10.00));
-        $items->add(new PlusOneItem($orderId, $product2, 10.00));
-        $items->decreaseQuantity(new MinusOneItem($orderId, $product2, 10.00));
+it('remove product', function (OrderId $orderId, ProductId $productId): void {
+    $items = new OrderItems();
 
-        $this->assertTrue($items->hasProduct('1'));
-        $this->assertTrue($items->hasProduct('2'));
+    $productPrice = new ProductUnitPrice(10.00);
+    $addItem = new PlusOneItem($orderId, $productId, $productPrice);
 
-        $this->assertEquals(0, $items->quantityOfProduct($product1));
-        $this->assertEquals(1, $items->quantityOfProduct($product2));
+    $items->add($addItem);
+    $items->removeProduct($productId);
 
-        $this->assertEquals(10.00, $items->totalPrice());
-        $this->assertEquals(1, $items->totalQuantity());
-    }
+    expect($items->totalQuantity())->toBe(0)
+        ->and($items->totalPrice())->toBe(0.00)
+        ->and($items->hasProduct($productId))->toBeFalse();
+})->with('orderId', 'productId');
 
-    public function testRemoveProductWhenUpdateQuantity(): void
-    {
-        $items = new OrderItems();
-        $this->assertEquals(0, $items->quantityOfProduct('0'));
+it('increase quantity of product', function (OrderId $orderId, ProductId $productId): void {
+    $items = new OrderItems();
 
-        $orderId = OrderId::create();
-        $productId = '1';
+    $productPrice = new ProductUnitPrice(10.00);
+    $addItem = new PlusOneItem($orderId, $productId, $productPrice);
 
-        $items->add(new PlusOneItem($orderId, $productId, 1.00));
-        $items->add(new PlusOneItem($orderId, $productId, 1.00));
+    $items->add($addItem);
+    $items->add($addItem);
 
-        $this->assertEquals(2, $items->quantityOfProduct('1'));
+    expect($items->totalQuantity())->toBe(2)
+        ->and($items->totalPrice())->toBe(20.00)
+        ->and($items->hasProduct($productId))->toBeTrue();
+})->with('orderId', 'productId');
 
-        $items->decreaseQuantity(new MinusOneItem($orderId, $productId, 1.00));
-        $this->assertEquals(1, $items->quantityOfProduct('1'));
+it('decrease quantity of product', function (OrderId $orderId, ProductId $productId): void {
+    $items = new OrderItems();
 
-        $items->decreaseQuantity(new MinusOneItem($orderId, $productId, 1.00));
-        $this->assertEquals(0, $items->quantityOfProduct('1'));
+    $productPrice = new ProductUnitPrice(10.00);
+    $addItem = new PlusOneItem($orderId, $productId, $productPrice);
 
-        $items->decreaseQuantity(new MinusOneItem($orderId, $productId, 1.00));
-        $this->assertEquals(false, $items->quantityOfProduct('1'));
-    }
-}
+    $items->add($addItem);
+    $items->add($addItem);
+    $items->add($addItem);
+
+    expect($items->totalQuantity())->toBe(3)
+        ->and($items->totalPrice())->toBe(30.00)
+        ->and($items->hasProduct($productId))->toBeTrue();
+
+    $removeItem = new MinusOneItem($orderId, $productId, $productPrice);
+    $items->decreaseQuantity($removeItem);
+
+    expect($items->totalQuantity())->toBe(2)
+        ->and($items->totalPrice())->toBe(20.00)
+        ->and($items->hasProduct($productId))->toBeTrue();
+})->with('orderId', 'productId');
