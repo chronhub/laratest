@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace BankRoute\Projection\Customer;
 
-use Exception;
 use BankRoute\Projection\ReadModelTable;
 use Illuminate\Database\Schema\Blueprint;
 use BankRoute\Model\Customer\CustomerStatus;
@@ -30,19 +29,6 @@ final class CustomerReadModel extends AbstractQueryModelConnection
 
     protected function updateCustomerOrder(OrderCreated $event): void
     {
-        $res = $this->query()
-            ->where($this->getKey(), $event->customerId()->toString())
-            ->update([
-                'current_order_id' => $event->orderId()->toString(),
-                'updated_at' => Clock::format($event->header(Header::EVENT_TIME)),
-            ]);
-
-        if ($res === 0) {
-            throw new Exception('Customer not found');
-        }
-
-        return;
-
         $this->update($event->customerId()->toString(), [
             'current_order_id' => $event->orderId()->toString(),
             'updated_at' => Clock::format($event->header(Header::EVENT_TIME)),
