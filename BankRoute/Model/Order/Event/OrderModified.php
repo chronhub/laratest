@@ -10,7 +10,7 @@ use BankRoute\Model\Customer\CustomerId;
 use Chronhub\Storm\Reporter\DomainEvent;
 use Chronhub\Storm\Message\HasConstructableContent;
 
-class OrderModified extends DomainEvent
+final class OrderModified extends DomainEvent
 {
     use HasConstructableContent;
 

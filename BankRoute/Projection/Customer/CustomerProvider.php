@@ -27,8 +27,8 @@ final readonly class CustomerProvider
     {
         return $this->model->newQuery()
             ->whereNotNull('current_order_id')
-            ->limit($limit)
             ->inRandomOrder()
+            ->limit($limit)
             ->cursor();
     }
 }

@@ -11,7 +11,7 @@ use Chronhub\Storm\Reporter\DomainEvent;
 use BankRoute\Model\Product\ProductUnitPrice;
 use Chronhub\Storm\Message\HasConstructableContent;
 
-class OrderCreated extends DomainEvent
+final class OrderCreated extends DomainEvent
 {
     use HasConstructableContent;
 

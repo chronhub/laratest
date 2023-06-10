@@ -10,7 +10,7 @@ use Chronhub\Storm\Reporter\DomainEvent;
 use BankRoute\Model\Product\ProductUnitPrice;
 use Chronhub\Storm\Message\HasConstructableContent;
 
-class OrderItemAdded extends DomainEvent
+final class OrderItemAdded extends DomainEvent
 {
     use HasConstructableContent;
 

@@ -21,6 +21,15 @@ readonly class ApiStreamEventLoader implements StreamEventLoader
     {
     }
 
+    public function query(array $streamEvents, StreamName $streamName): Generator
+    {
+        $streamEvents = $this->call($streamEvents, $streamName);
+
+        yield from $streamEvents;
+
+        return $streamEvents->getReturn();
+    }
+
     /**
      * @throws StreamNotFound
      */
@@ -57,14 +66,5 @@ readonly class ApiStreamEventLoader implements StreamEventLoader
                 throw StreamNotFound::withStreamName($streamName);
             }
         }
-    }
-
-    public function query(array $streamEvents, StreamName $streamName): Generator
-    {
-        $streamEvents = $this->call($streamEvents, $streamName);
-
-        yield from $streamEvents;
-
-        return $streamEvents->getReturn();
     }
 }

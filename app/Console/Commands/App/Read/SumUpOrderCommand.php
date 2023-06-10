@@ -14,14 +14,15 @@ use Chronhub\Storm\Contracts\Projector\Projector;
 use Chronhub\Storm\Contracts\Projector\QueryCasterInterface;
 use BankRoute\Model\Order\Event\OrderMarkedAsProcessingPayment;
 use Chronhub\Storm\Contracts\Projector\ProjectorServiceManager;
+use Symfony\Component\Console\Command\SignalableCommandInterface;
 use function json_encode;
 use function pcntl_async_signals;
 
-class SumUpOrderCommand extends Command
+final class SumUpOrderCommand extends Command implements SignalableCommandInterface
 {
     protected $signature = 'order:summary';
 
-    protected $description = 'Sum up order';
+    protected $description = 'Sum up state of orders';
 
     protected Projector $projection;
 
@@ -42,7 +43,7 @@ class SumUpOrderCommand extends Command
 
         $state = $this->projection->getState();
 
-        $this->info('Order sum up:'.PHP_EOL.json_encode($state, JSON_PRETTY_PRINT));
+        $this->info('Order state summary: '.PHP_EOL.json_encode($state, JSON_PRETTY_PRINT));
 
         return self::SUCCESS;
     }
