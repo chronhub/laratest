@@ -14,7 +14,7 @@ use function is_string;
     description: 'Setup shop account with migration and default streams creation,
                   caution, use an empty database as it will clean everything inside'
 )]
-class ResetShopAppCommand extends Command
+class ResetAppCommand extends Command
 {
     /**
      * List of stream names which will be committed

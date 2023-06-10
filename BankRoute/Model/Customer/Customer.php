@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace BankRoute\Model\Customer;
 
+use BankRoute\Model\Order\OrderId;
 use Chronhub\Storm\Aggregate\HasAggregateBehaviour;
 use BankRoute\Model\Customer\Event\CustomerActivated;
 use Chronhub\Storm\Contracts\Aggregate\AggregateRoot;
@@ -18,6 +19,8 @@ final class Customer implements AggregateRoot
     private CustomerEmail $email;
 
     private CustomerStatus $status;
+
+    private OrderId $orderId;
 
     public static function register(CustomerId $customerId, CustomerEmail $customerEmail): self
     {

@@ -17,6 +17,7 @@ use BankRoute\Model\Order\Event\OrderItemAdded;
 use BankRoute\Model\Order\Event\OrderItemRemoved;
 use BankRoute\Model\Order\Event\OrderItemQuantityDecreased;
 use BankRoute\Model\Order\Event\OrderItemQuantityIncreased;
+use BankRoute\Model\Order\Event\OrderMarkedAsProcessingPayment;
 use Chronhub\Larastorm\Support\ReadModel\AbstractQueryModelConnection;
 use function abs;
 
@@ -66,7 +67,7 @@ final class OrderViewReadModel extends AbstractQueryModelConnection
         ], ['updated_at' => Clock::format($event->header(Header::EVENT_TIME))]);
     }
 
-    protected function updateOrderStatus(OrderCanceled|OrderModified|OrderPaid $event): void
+    protected function updateOrderStatus(OrderCanceled|OrderModified|OrderPaid|OrderMarkedAsProcessingPayment $event): void
     {
         $this->update($event->orderId()->toString(), [
             'status' => $event->status()->value,

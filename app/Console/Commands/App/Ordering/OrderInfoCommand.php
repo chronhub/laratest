@@ -25,12 +25,19 @@ final class OrderInfoCommand extends Command
     {
         $order = $orderQuery->getOrderByIdWithDetails($this->argument('order'));
 
-        if ($order === null) {
+        if (! $order instanceof OrderView) {
             $this->error('Order not found');
 
             return self::FAILURE;
         }
 
+        $this->displayTable($order);
+
+        return self::SUCCESS;
+    }
+
+    private function displayTable(OrderView $order): void
+    {
         $table = new Table($this->output);
         $table->setHeaders(
             [
@@ -51,8 +58,6 @@ final class OrderInfoCommand extends Command
         ]);
 
         $table->render();
-
-        return self::SUCCESS;
     }
 
     private function getOrderDetails(OrderView $order): array

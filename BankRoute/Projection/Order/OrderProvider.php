@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace BankRoute\Projection\Order;
 
 use Illuminate\Support\Enumerable;
+use BankRoute\Model\Order\OrderState;
 use Illuminate\Database\Eloquent\Model;
 
 final readonly class OrderProvider
@@ -26,12 +27,22 @@ final readonly class OrderProvider
             ->find($orderId);
     }
 
-    public function fullPendingOrders(): Enumerable
+    public function modifiedOrdersForPayment(): Enumerable
     {
         return $this->model
             ->newQuery()
-            ->modified()
-            ->has('details')
+            ->where('quantity', '>', 0)
+            ->where('status', OrderState::Modified)
+            ->cursor();
+    }
+
+    public function fullPreparedForPaymentOrders(): Enumerable
+    {
+        return $this->model
+            ->newQuery()
+            ->where('status', OrderState::ProcessingPayment)
+            ->with('details')
+            ->whereHas('details')
             ->cursor();
     }
 

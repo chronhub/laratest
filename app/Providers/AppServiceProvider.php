@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use PDO;
+use App\Api\ApiClient;
 use App\Api\ApiChronicler;
 use App\Api\ApiStreamEventLoader;
 use Illuminate\Support\Facades\Event;
@@ -116,7 +117,7 @@ class AppServiceProvider extends ServiceProvider
                 ->setDefaultDriver('connection')
                 ->create('read');
 
-            return new ApiChronicler($chronicler, $app[ApiStreamEventLoader::class]);
+            return new ApiChronicler(new ApiClient(), $chronicler, $app[ApiStreamEventLoader::class]);
         });
     }
 

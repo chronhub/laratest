@@ -11,13 +11,14 @@ use BankRoute\Projection\Order\OrderView;
 use BankRoute\Model\Order\Query\GetOrderById;
 use BankRoute\Model\Order\Query\GetFullOrderById;
 use BankRoute\Model\Order\Query\GetFullPendingOrder;
-use BankRoute\Model\Order\Query\GetFullPendingOrders;
+use BankRoute\Model\Order\Query\GetModifiedOrdersForPayment;
+use BankRoute\Model\Order\Query\GetFullPreparedForPaymentOrders;
 
 final readonly class QueryOrderService
 {
     use PromiseHandler;
 
-    public function __construct(private ReportQuery $reportQuery)
+    public function __construct(private ReportQuery $reporter)
     {
     }
 
@@ -25,27 +26,34 @@ final readonly class QueryOrderService
     {
         $query = GetOrderById::fromContent(['order_id' => $orderId]);
 
-        return $this->handlePromise($this->reportQuery->relay($query));
+        return $this->handlePromise($this->reporter->relay($query));
     }
 
     public function getOrderByIdWithDetails(string $orderId): ?OrderView
     {
         $query = GetFullOrderById::fromContent(['order_id' => $orderId]);
 
-        return $this->handlePromise($this->reportQuery->relay($query));
+        return $this->handlePromise($this->reporter->relay($query));
     }
 
     public function getPendingOrderByIdWithDetails(string $orderId): ?OrderView
     {
         $query = GetFullPendingOrder::fromContent(['order_id' => $orderId]);
 
-        return $this->handlePromise($this->reportQuery->relay($query));
+        return $this->handlePromise($this->reporter->relay($query));
     }
 
-    public function getPendingOrdersWithDetails(): Enumerable
+    public function getPreparedOrdersForPaymentWithDetails(): Enumerable
     {
-        $query = new GetFullPendingOrders();
+        $query = new GetFullPreparedForPaymentOrders();
 
-        return $this->handlePromise($this->reportQuery->relay($query));
+        return $this->handlePromise($this->reporter->relay($query));
+    }
+
+    public function getModifiedOrdersForPayment(): Enumerable
+    {
+        $query = new GetModifiedOrdersForPayment();
+
+        return $this->handlePromise($this->reporter->relay($query));
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Console\Commands\Projection;
+namespace App\Console\Commands\Projection\tmp;
 
 use Closure;
 use InvalidArgumentException;
@@ -73,7 +73,7 @@ final class PrimeCustomerProjectionCommand extends Command implements Signalable
             throw new InvalidArgumentException('QueryScope is not an instance of ProjectionQueryScopeConnection');
         }
 
-        return $queryScope->fromIncludedPositionWithLimit(2000);
+        return $queryScope->fromIncludedPosition();
     }
 
     public function getSubscribedSignals(): array

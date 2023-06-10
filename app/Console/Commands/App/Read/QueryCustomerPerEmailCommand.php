@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Console\Commands\Projection;
+namespace App\Console\Commands\App\Read;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\Query\Builder;
@@ -23,7 +23,7 @@ final class QueryCustomerPerEmailCommand extends Command
         if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
             $this->error("Invalid email $email");
 
-            return 0;
+            return self::FAILURE;
         }
 
         $query = Project::create('emit')->query();

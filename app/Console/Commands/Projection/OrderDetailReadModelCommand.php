@@ -6,7 +6,6 @@ namespace App\Console\Commands\Projection;
 
 use Illuminate\Console\Command;
 use Chronhub\Storm\Reporter\DomainEvent;
-use App\Api\ApiOrdersFromIncludedPosition;
 use BankRoute\Model\Order\Event\OrderPaid;
 use BankRoute\Model\Order\Event\OrderCanceled;
 use BankRoute\Model\Order\Event\OrderItemAdded;
@@ -27,10 +26,10 @@ class OrderDetailReadModelCommand extends Command implements SignalableCommandIn
     protected Projector $projection;
 
     protected $signature = 'project:order-detail
-                            { projector=api_order      : projector name }
-                            { limit=1000         : query filter with limit default 1000 or zero for no limit }
-                            { --signal=1         : dispatch async signal }
-                            { --in-background=1  : run in background }';
+                            { projector=api_order : projector name }
+                            { --limit=1000        : query filter with limit default 500 or zero for no limit }
+                            { --signal=1          : dispatch async signal }
+                            { --in-background=1   : run in background }';
 
     public function handle(ProjectorServiceManager $serviceManager, OrderDetailReadModel $readModel): int
     {
@@ -44,7 +43,7 @@ class OrderDetailReadModelCommand extends Command implements SignalableCommandIn
             ->initialize(fn (): array => ['quantity_on_hand' => 0])
             ->fromStreams('order')
             ->whenAny($this->eventHandlers())
-            ->withQueryFilter(new ApiOrdersFromIncludedPosition())
+            ->withQueryFilter($this->queryWithLimit($projectorManager))
             ->run($this->keepRunning());
 
         return self::SUCCESS;
@@ -54,9 +53,7 @@ class OrderDetailReadModelCommand extends Command implements SignalableCommandIn
     {
         return function (DomainEvent $event, array $state): array {
             /** @var ReadModelCasterInterface $this */
-            if ($event instanceof OrderItemAdded
-                || $event instanceof OrderItemQuantityIncreased
-                || $event instanceof OrderItemQuantityDecreased) {
+            if ($event instanceof OrderItemAdded || $event instanceof OrderItemQuantityIncreased || $event instanceof OrderItemQuantityDecreased) {
                 $this->readModel()->stack('recordOrderItem', $event);
 
                 if ($event instanceof OrderItemQuantityDecreased) {
@@ -64,6 +61,8 @@ class OrderDetailReadModelCommand extends Command implements SignalableCommandIn
                 } else {
                     $state['quantity_on_hand'] += $event->productQuantity();
                 }
+
+                return $state;
             }
 
             if ($event instanceof OrderItemRemoved) {

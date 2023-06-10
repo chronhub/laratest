@@ -11,32 +11,32 @@ use function random_int;
 
 final class PayOrCancelOrderCommand extends Command
 {
-    protected $signature = 'order:seed-pay-or-cancel { --rate=70 : payment success rate in percent, default 70% }';
+    protected $signature = 'order:seed-pay-or-cancel
+                            { --rate=70 : payment success rate in percent, default 70% }';
 
     public function handle(QueryOrderService $queryOrder): int
     {
         $rate = (int) $this->option('rate');
 
-        $orders = $queryOrder->getPendingOrdersWithDetails();
+        $orders = $queryOrder->getPreparedOrdersForPaymentWithDetails();
 
         if ($orders->isEmpty()) {
-            $this->warn('No orders pending');
+            $this->warn('No orders prepared for payment');
 
             return self::FAILURE;
         }
 
-        // todo need status process payment to reject all others event which can happen later
-        // Order should be in status "payment in progress" or "payment failed" or "payment success"
-        // Payment should be handle synchronously
-
-        $orders->each(function (OrderView $order) use ($rate) {
-            $payOrReset = random_int(0, 100) <= $rate;
-
-            $this->call('order:'.($payOrReset ? 'pay' : 'cancel'), ['order' => $order->orderId()]);
-        });
+        $orders->each(fn (OrderView $order) => $this->callOrder($order->orderId(), $rate));
 
         $this->info("{$orders->count()} orders processed");
 
         return self::SUCCESS;
+    }
+
+    private function callOrder(string $orderId, int $rate): void
+    {
+        $payOrReset = random_int(0, 100) <= $rate;
+
+        $this->call('order:'.($payOrReset ? 'pay' : 'cancel'), ['order' => $orderId]);
     }
 }

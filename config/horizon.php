@@ -184,10 +184,10 @@ return [
     'defaults' => [
         'supervisor-1' => [
             'connection' => 'rabbitmq',
-            'queue' => ['customer'],
+            'queue' => ['default'],
             'balance' => 'auto',
             'autoScalingStrategy' => 'time',
-            'maxProcesses' => 10,
+            'maxProcesses' => 5,
             'maxTime' => 0,
             'maxJobs' => 1000,
             'memory' => 4096,
@@ -195,6 +195,7 @@ return [
             'timeout' => 10,
             'nice' => 0,
         ],
+
         'supervisor-2' => [
             'connection' => 'rabbitmq',
             'queue' => ['order'],

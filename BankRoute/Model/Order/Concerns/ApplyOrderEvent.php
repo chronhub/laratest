@@ -15,6 +15,7 @@ use BankRoute\Model\Order\Event\OrderItemAdded;
 use BankRoute\Model\Order\Event\OrderItemRemoved;
 use BankRoute\Model\Order\Event\OrderItemQuantityDecreased;
 use BankRoute\Model\Order\Event\OrderItemQuantityIncreased;
+use BankRoute\Model\Order\Event\OrderMarkedAsProcessingPayment;
 
 trait ApplyOrderEvent
 {
@@ -60,6 +61,11 @@ trait ApplyOrderEvent
         $this->items->decreaseQuantity(
             new MinusOneItem($event->orderId(), $event->productId(), $event->productPrice())
         );
+    }
+
+    protected function applyOrderMarkedAsProcessingPayment(OrderMarkedAsProcessingPayment $event): void
+    {
+        $this->status = $event->status();
     }
 
     protected function applyOrderPaid(OrderPaid $event): void

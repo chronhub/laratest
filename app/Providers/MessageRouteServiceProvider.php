@@ -29,6 +29,7 @@ use Chronhub\Storm\Contracts\Routing\Registrar;
 use App\Report\Customer\Signup\RegisterCustomer;
 use BankRoute\Model\Order\Event\OrderItemRemoved;
 use BankRoute\Model\Order\Query\GetFullOrderById;
+use App\Report\Order\MarkOrderAsProcessingPayment;
 use BankRoute\Model\Order\Handler\PayOrderHandler;
 use App\Testing\StopPropagationOnTimeoutSubscriber;
 use BankRoute\Model\Customer\Query\GetCustomerById;
@@ -38,7 +39,6 @@ use BankRoute\Model\Order\Query\GetFullPendingOrder;
 use BankRoute\Model\Order\Query\GetOrderByIdHandler;
 use App\Report\Customer\Signup\CustomerSignupStarted;
 use BankRoute\Model\Order\Handler\CancelOrderHandler;
-use BankRoute\Model\Order\Query\GetFullPendingOrders;
 use Chronhub\Storm\Reporter\Subscribers\ConsumeEvent;
 use Chronhub\Storm\Reporter\Subscribers\ConsumeQuery;
 use BankRoute\Model\Customer\Event\CustomerRegistered;
@@ -53,13 +53,18 @@ use BankRoute\Model\Customer\Query\GetCustomerByIdHandler;
 use BankRoute\Model\Order\Event\OrderItemQuantityDecreased;
 use BankRoute\Model\Order\Event\OrderItemQuantityIncreased;
 use BankRoute\Model\Order\Query\GetFullPendingOrderHandler;
-use BankRoute\Model\Order\Query\GetFullPendingOrdersHandler;
+use BankRoute\Model\Order\Query\GetModifiedOrdersForPayment;
 use BankRoute\Model\Customer\Handler\RegisterCustomerHandler;
 use Chronhub\Storm\Support\Bridge\MakeCausationDomainCommand;
+use BankRoute\Model\Order\Event\OrderMarkedAsProcessingPayment;
 use BankRoute\ProcessManager\CreateOrderOnCustomerRegistration;
+use BankRoute\Model\Order\Query\GetFullPreparedForPaymentOrders;
 use BankRoute\Model\Order\Handler\DecreaseOrderItemQuantityHandler;
+use BankRoute\Model\Order\Query\GetModifiedOrdersForPaymentHandler;
 use Chronhub\Storm\Support\Bridge\HandleTransactionalDomainCommand;
 use App\Report\Customer\Signup\SendActivationEmailOnSignUpCompleted;
+use BankRoute\Model\Order\Handler\MarkOrderAsProcessingPaymentHandler;
+use BankRoute\Model\Order\Query\GetFullPreparedForPaymentOrdersHandler;
 
 class MessageRouteServiceProvider extends ServiceProvider
 {
@@ -70,14 +75,15 @@ class MessageRouteServiceProvider extends ServiceProvider
                     'name' => 'default',
                     'routes' => [
                         [RegisterCustomer::class, RegisterCustomerHandler::class],
-                        [StartOrder::class, StartOrderHandler::class],
-                        [CancelOrder::class, CancelOrderHandler::class],
-                        [AddOrderItem::class, AddOrderItemHandler::class],
-                        [RemoveOrderItem::class, RemoveOrderItemHandler::class],
-                        [DecreaseOrderItemQuantity::class, DecreaseOrderItemQuantityHandler::class, ['delay' => 5, 'backoff' => 5]],
-                        [PayOrder::class, PayOrderHandler::class],
+                        [StartOrder::class, StartOrderHandler::class, ['name' => 'order']],
+                        [CancelOrder::class, CancelOrderHandler::class, ['name' => 'payment']],
+                        [AddOrderItem::class, AddOrderItemHandler::class, ['name' => 'order']],
+                        [RemoveOrderItem::class, RemoveOrderItemHandler::class, ['name' => 'order']],
+                        [DecreaseOrderItemQuantity::class, DecreaseOrderItemQuantityHandler::class, ['name' => 'order', 'delay' => 5, 'backoff' => 5]],
+                        [MarkOrderAsProcessingPayment::class, MarkOrderAsProcessingPaymentHandler::class, ['name' => 'payment', 'backoff' => 5]],
+                        [PayOrder::class, PayOrderHandler::class, ['name' => 'payment']],
                     ],
-                    'queue' => ['connection' => 'rabbitmq', 'name' => 'default', 'timeout' => 10],
+                    'queue' => ['connection' => 'rabbitmq', 'name' => 'customer', 'timeout' => 10],
                 ],
             ],
 
@@ -92,16 +98,17 @@ class MessageRouteServiceProvider extends ServiceProvider
                             SendActivationEmailOnSignUpCompleted::class,
                             CreateOrderOnCustomerRegistration::class,
                         ]],
-                        [OrderCreated::class],
-                        [OrderModified::class],
-                        [OrderCanceled::class, RenewOrderOnOrderCanceled::class],
-                        [OrderItemAdded::class],
-                        [OrderItemRemoved::class],
-                        [OrderItemQuantityIncreased::class],
-                        [OrderItemQuantityDecreased::class],
-                        [OrderPaid::class, RenewOrderOnOrderPaid::class],
+                        [OrderCreated::class, null, ['name' => 'order']],
+                        [OrderModified::class, null, ['name' => 'order']],
+                        [OrderCanceled::class, RenewOrderOnOrderCanceled::class, ['name' => 'order']],
+                        [OrderItemAdded::class, null, ['name' => 'order']],
+                        [OrderItemRemoved::class, null, ['name' => 'order']],
+                        [OrderItemQuantityIncreased::class, null, ['name' => 'order']],
+                        [OrderItemQuantityDecreased::class, null, ['name' => 'order']],
+                        [OrderMarkedAsProcessingPayment::class, null, ['name' => 'payment']],
+                        [OrderPaid::class, RenewOrderOnOrderPaid::class, ['name' => 'order']],
                     ],
-                    'queue' => ['connection' => 'rabbitmq', 'name' => 'default', 'timeout' => 10],
+                    'queue' => ['connection' => 'rabbitmq', 'name' => 'customer', 'timeout' => 10],
                 ],
             ],
 
@@ -113,7 +120,8 @@ class MessageRouteServiceProvider extends ServiceProvider
                         [GetOrderById::class, GetOrderByIdHandler::class],
                         [GetFullOrderById::class, GetFullOrderByIdHandler::class],
                         [GetFullPendingOrder::class, GetFullPendingOrderHandler::class],
-                        [GetFullPendingOrders::class, GetFullPendingOrdersHandler::class],
+                        [GetFullPreparedForPaymentOrders::class, GetFullPreparedForPaymentOrdersHandler::class],
+                        [GetModifiedOrdersForPayment::class, GetModifiedOrdersForPaymentHandler::class],
                         [GetProducts::class, GetProductsHandler::class],
                     ],
                 ],

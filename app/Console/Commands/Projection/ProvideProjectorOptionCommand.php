@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands\Projection;
 
+use RuntimeException;
 use Chronhub\Storm\Contracts\Chronicler\QueryFilter;
 use Chronhub\Storm\Contracts\Projector\ProjectorManagerInterface;
 use Chronhub\Larastorm\Support\Contracts\ProjectionQueryScopeConnection;
@@ -23,16 +24,15 @@ trait ProvideProjectorOptionCommand
 
     protected function queryWithLimit(ProjectorManagerInterface $projectorManager): QueryFilter
     {
-        /** @var ProjectionQueryScopeConnection $queryScope */
         $queryScope = $projectorManager->queryScope();
 
-        $limit = (int) $this->argument('limit');
-
-        if ($limit === 0) {
-            return $queryScope->fromIncludedPosition();
+        if (! $queryScope instanceof ProjectionQueryScopeConnection) {
+            throw new RuntimeException('Query scope must implement '.ProjectionQueryScopeConnection::class);
         }
 
-        return $queryScope->fromIncludedPositionWithLimit($limit);
+        $limit = (int) $this->option('limit');
+
+        return $queryScope->fromIncludedPosition($limit);
     }
 
     protected function registerSignalHandler(): void

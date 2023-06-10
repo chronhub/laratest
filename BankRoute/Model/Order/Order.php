@@ -22,6 +22,7 @@ use BankRoute\Model\Order\Exceptions\ProductNotFoundInOrder;
 use BankRoute\Model\Order\Exceptions\OrderQuantityOutOfBounds;
 use BankRoute\Model\Order\Exceptions\UnableToChangeOrderState;
 use Chronhub\Storm\Snapshot\ReconstituteAggregateFromSnapshot;
+use BankRoute\Model\Order\Event\OrderMarkedAsProcessingPayment;
 use Chronhub\Storm\Contracts\Aggregate\AggregateRootWithSnapshotting;
 use function abs;
 
@@ -60,13 +61,20 @@ final class Order implements AggregateRootWithSnapshotting
 
     public function cancel(): void
     {
-        $this->ensureOrderCanBeModified();
+        if ($this->status === OrderState::Canceled) {
+            return;
+        }
+
+        if ($this->status === OrderState::Paid) {
+            throw UnableToChangeOrderState::withOrder($this->orderId(), $this->status);
+        }
 
         $this->recordThat(OrderCanceled::fromContent(
             [
                 'order_id' => $this->orderId()->toString(),
                 'customer_id' => $this->customerId()->toString(),
                 'order_status' => OrderState::Canceled->value,
+                'old_order_status' => $this->status->value,
                 'order_quantity' => self::DEFAULT_QUANTITY,
                 'product_price' => self::DEFAULT_PRICE,
                 'old_order_quantity' => $this->items->totalQuantity(),
@@ -121,9 +129,28 @@ final class Order implements AggregateRootWithSnapshotting
         ));
     }
 
+    public function markAsProcessingPayment(): void
+    {
+        if ($this->status === OrderState::ProcessingPayment) {
+            return;
+        }
+
+        $this->ensureOrderCanBeModified();
+
+        $this->recordThat(OrderMarkedAsProcessingPayment::fromContent(
+            [
+                'order_id' => $this->orderId()->toString(),
+                'customer_id' => $this->customerId()->toString(),
+                'order_status' => OrderState::ProcessingPayment->value,
+            ]
+        ));
+    }
+
     public function pay(): void
     {
-        $this->ensureOrderCanBeModified();
+        if ($this->status !== OrderState::ProcessingPayment) {
+            throw new UnableToChangeOrderState('Invalid order state. Order must be in processing payment state');
+        }
 
         if ($this->items->totalQuantity() < 1) {
             throw OrderQuantityOutOfBounds::canNotBeEmpty($this->orderId(), $this->status);

@@ -11,13 +11,21 @@ class Kernel extends ConsoleKernel
 {
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('order:customer', ['count' => 500])->everyMinute();
+
+        $schedule->command('order:seed', ['--count' => 500])
+            ->withoutOverlapping()
+            ->everyMinute();
+
+        $schedule->command('order:prepare-pay')->everyMinute();
+
+        $schedule->command('order:seed-pay')->everyTwoMinutes();
     }
 
     protected function commands(): void
     {
         $this->load(__DIR__.'/Commands');
 
-        require base_path('routes/console.php');
+        //require base_path('routes/console.php');
     }
 }

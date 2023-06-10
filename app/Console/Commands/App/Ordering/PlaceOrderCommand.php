@@ -27,7 +27,7 @@ class PlaceOrderCommand extends Command
 
     protected $signature = 'order:place { order : order id }';
 
-    public function handle(OrderService $orderService, QueryOrderService $queryOrder): int
+    public function handle(QueryOrderService $queryOrder, OrderService $orderService): int
     {
         $order = $queryOrder->getOrderById($this->argument('order'));
 

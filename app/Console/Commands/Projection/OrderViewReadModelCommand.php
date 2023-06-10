@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Console\Commands\Projection;
 
 use Illuminate\Console\Command;
+use BankRoute\Model\Order\OrderState;
 use Chronhub\Storm\Reporter\DomainEvent;
-use App\Api\ApiOrdersFromIncludedPosition;
 use BankRoute\Model\Order\Event\OrderPaid;
 use BankRoute\Model\Order\Event\OrderCreated;
 use BankRoute\Model\Order\Event\OrderCanceled;
@@ -17,6 +17,7 @@ use Chronhub\Storm\Contracts\Projector\Projector;
 use BankRoute\Projection\Order\OrderViewReadModel;
 use BankRoute\Model\Order\Event\OrderItemQuantityDecreased;
 use BankRoute\Model\Order\Event\OrderItemQuantityIncreased;
+use BankRoute\Model\Order\Event\OrderMarkedAsProcessingPayment;
 use Chronhub\Storm\Contracts\Projector\ProjectorServiceManager;
 use Chronhub\Storm\Contracts\Projector\ReadModelCasterInterface;
 use Symfony\Component\Console\Command\SignalableCommandInterface;
@@ -28,10 +29,10 @@ class OrderViewReadModelCommand extends Command implements SignalableCommandInte
     protected Projector $projection;
 
     protected $signature = 'project:order-view
-                            { projector=api_order      : projector name }
-                            { limit=1000         : query filter with limit default 1000 or zero for no limit }
-                            { --signal=1         : dispatch async signal }
-                            { --in-background=1  : run in background }';
+                            { projector=api_order : projector name }
+                            { --limit=1000        : query filter with limit default 500 or zero for no limit }
+                            { --signal=1          : dispatch async signal }
+                            { --in-background=1   : run in background }';
 
     public function handle(ProjectorServiceManager $manager, OrderViewReadModel $readModel): int
     {
@@ -42,10 +43,10 @@ class OrderViewReadModelCommand extends Command implements SignalableCommandInte
         $this->registerSignalHandler();
 
         $this->projection
-            ->initialize(fn (): array => ['in_progress' => 0, 'paid' => 0])
+            ->initialize(fn (): array => ['in_progress' => 0, 'prepared' => 0, 'canceled' => 0, 'paid' => 0])
             ->fromStreams('order')
             ->whenAny($this->eventHandlers())
-            ->withQueryFilter(new ApiOrdersFromIncludedPosition())
+            ->withQueryFilter($this->queryWithLimit($projector))
             ->run($this->keepRunning());
 
         return self::SUCCESS;
@@ -77,15 +78,27 @@ class OrderViewReadModelCommand extends Command implements SignalableCommandInte
                 $this->readModel()->stack('decreaseOrderQuantity', $event);
             }
 
-            if ($event instanceof OrderModified || $event instanceof OrderPaid || $event instanceof OrderCanceled) {
+            if ($event instanceof OrderModified || $event instanceof OrderPaid || $event instanceof OrderCanceled || $event instanceof OrderMarkedAsProcessingPayment) {
                 $this->readModel()->stack('updateOrderStatus', $event);
 
                 if ($event instanceof OrderCanceled) {
                     $state['in_progress']--;
+
+                    $oldStatus = $event->toContent()['old_order_status'] ?? null;
+                    if ($oldStatus === OrderState::ProcessingPayment->value) {
+                        $state['prepared']--;
+                    }
+
+                    $state['canceled']++;
+                }
+
+                if ($event instanceof OrderMarkedAsProcessingPayment) {
+                    $state['prepared']++;
                 }
 
                 if ($event instanceof OrderPaid) {
                     $state['paid']++;
+                    $state['prepared']--;
                     $state['in_progress']--;
                 }
             }

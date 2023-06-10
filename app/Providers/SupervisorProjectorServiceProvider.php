@@ -18,8 +18,6 @@ class SupervisorProjectorServiceProvider extends ServiceProvider
      */
     protected array $commands = [
         'customer' => 'customer',
-        //'customer-prime' => 'customer_prime',
-        //'customer-orders' => 'customer_orders',
         'order-view' => 'order_view',
         'order-detail' => 'order_detail',
     ];

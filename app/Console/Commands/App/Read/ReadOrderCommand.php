@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Console\Commands\Projection;
+namespace App\Console\Commands\App\Read;
 
 use Str;
 use Closure;
@@ -25,7 +25,9 @@ use function pcntl_async_signals;
 
 final class ReadOrderCommand extends Command implements SignalableCommandInterface
 {
-    protected $signature = 'order:read { order : order id }';
+    protected $signature = 'order:read
+                                { order      : order id }
+                                { --timer=30 : timer in seconds to avoid infinite loop }';
 
     protected Projector $projection;
 
@@ -44,7 +46,12 @@ final class ReadOrderCommand extends Command implements SignalableCommandInterfa
             ->fromStreams('order')
             ->whenAny($this->eventHandlers($orderId))
             ->withQueryFilter($projector->queryScope()->fromIncludedPosition())
+            ->withTimer((int) $this->option('timer'))
             ->run(true);
+
+        if (! $this->projection->getState()['found']) {
+            $this->warn("Order $orderId not found in time");
+        }
 
         return self::SUCCESS;
     }
@@ -74,6 +81,8 @@ final class ReadOrderCommand extends Command implements SignalableCommandInterfa
 
             if ($event instanceof OrderCreated) {
                 $print("Order $orderId created");
+
+                $state['found'] = true;
 
                 return $state;
             }

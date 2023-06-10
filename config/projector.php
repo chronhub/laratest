@@ -68,13 +68,13 @@ return [
                 'chronicler' => 'chronicler.api.read',
                 'options' => 'lazy',
                 'provider' => 'connection',
-                'scope' => \App\Api\OrderProjectionQueryScope::class,
+                'scope' => \App\Api\ApiProjectionQueryScope::class,
             ],
             'api_customer' => [
                 'chronicler' => 'chronicler.api.read',
                 'options' => 'lazy',
                 'provider' => 'connection',
-                'scope' => \App\Api\CustomerProjectionQueryScope::class,
+                'scope' => \App\Api\ApiProjectionQueryScope::class,
             ],
 
         ],
@@ -112,9 +112,9 @@ return [
 
         'lazy' => [
             ProjectionOption::SIGNAL => true,
-            ProjectionOption::LOCKOUT => 5000000,
-            ProjectionOption::SLEEP => 1000000,
-            ProjectionOption::TIMEOUT => 10000,
+            ProjectionOption::LOCKOUT => 100000,
+            ProjectionOption::SLEEP => 100000,
+            ProjectionOption::TIMEOUT => 100000,
             ProjectionOption::BLOCK_SIZE => 1000,
             ProjectionOption::RETRIES => '50, 2000, 50',
             ProjectionOption::DETECTION_WINDOWS => null,

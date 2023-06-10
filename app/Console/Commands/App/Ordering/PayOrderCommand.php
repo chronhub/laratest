@@ -21,11 +21,10 @@ final class PayOrderCommand extends Command
 
     protected $signature = 'order:pay { order : order id }';
 
-    public function handle(OrderService $orderService, QueryOrderService $orderQuery): int
+    public function handle(QueryOrderService $orderQuery, OrderService $orderService): int
     {
         $order = $orderQuery->getOrderById($this->argument('order'));
 
-        // todo move model to dto
         if (! $order instanceof OrderView) {
             $this->warn('Order not found');
 

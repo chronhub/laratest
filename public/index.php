@@ -1,9 +1,11 @@
 <?php
 
-use Illuminate\Contracts\Http\Kernel;
-use Illuminate\Http\Request;
+declare(strict_types=1);
 
-define('LARAVEL_START', microtime(true));
+use Illuminate\Http\Request;
+use Illuminate\Contracts\Http\Kernel;
+
+\define('LARAVEL_START', \microtime(true));
 
 /*
 |--------------------------------------------------------------------------
@@ -16,7 +18,7 @@ define('LARAVEL_START', microtime(true));
 |
 */
 
-if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
+if (\file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
     require $maintenance;
 }
 

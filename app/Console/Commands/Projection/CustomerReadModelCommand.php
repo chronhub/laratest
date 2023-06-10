@@ -7,7 +7,6 @@ namespace App\Console\Commands\Projection;
 use Closure;
 use Illuminate\Console\Command;
 use Chronhub\Storm\Reporter\DomainEvent;
-use App\Api\ApiCustomersFromIncludedPosition;
 use BankRoute\Model\Order\Event\OrderCreated;
 use Chronhub\Storm\Contracts\Projector\Projector;
 use BankRoute\Projection\Customer\CustomerReadModel;
@@ -23,10 +22,10 @@ final class CustomerReadModelCommand extends Command implements SignalableComman
     protected Projector $projection;
 
     protected $signature = 'project:customer
-                            { projector=api_customer      : projector name }
-                            { limit=1000         : query filter with limit default 1000 or zero for no limit }
-                            { --signal=1         : dispatch async signal }
-                            { --in-background=1  : run in background }';
+                            { projector=api_customer : projector name }
+                            { --limit=1000           : query filter with limit default 500 or zero for no limit }
+                            { --signal=1             : dispatch async signal }
+                            { --in-background=1      : run in background }';
 
     public function handle(ProjectorServiceManager $serviceManager, CustomerReadModel $readModel): int
     {
@@ -37,10 +36,10 @@ final class CustomerReadModelCommand extends Command implements SignalableComman
         $this->registerSignalHandler();
 
         $this->projection
-            ->initialize(fn (): array => ['count' => 0])
+            ->initialize(fn (): array => ['customers' => 0, 'orders' => 0])
             ->fromStreams('customer', 'order')
             ->whenAny($this->eventHandlers())
-            ->withQueryFilter(new ApiCustomersFromIncludedPosition())
+            ->withQueryFilter($this->queryWithLimit($projectorManager))
             ->run($this->keepRunning());
 
         return self::SUCCESS;
@@ -52,14 +51,14 @@ final class CustomerReadModelCommand extends Command implements SignalableComman
             /** @var ReadModelCasterInterface $this */
             if ($event instanceof CustomerRegistered) {
                 $this->readModel()->stack('recordCustomer', $event);
-
-                $state['count']++;
+                $state['customers']++;
 
                 return $state;
             }
 
             if ($event instanceof OrderCreated) {
                 $this->readModel()->stack('updateCustomerOrder', $event);
+                $state['orders']++;
             }
 
             return $state;

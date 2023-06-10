@@ -14,9 +14,9 @@ final class RabbitMQJob extends \VladimirYuldashev\LaravelQueueRabbitMQ\Queue\Jo
     {
         $payload = json_decode($this->getRawBody(), true, 512, JSON_THROW_ON_ERROR);
 
-        $command = $payload['data']['command'];
+        $serialized = $payload['data']['command'];
 
-        $command = unserialize($command, [MessageJob::class]);
+        $command = unserialize($serialized, [MessageJob::class]);
 
         if ($command instanceof MessageJob) {
             $command->handle($this->container);

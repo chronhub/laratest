@@ -12,8 +12,8 @@ use Illuminate\Validation\Rules\Password;
 final readonly class UserRepository
 {
     public function __construct(private User $authUser,
-                                private Hasher $encoder,
-                                private Factory $validation)
+        private Hasher $encoder,
+        private Factory $validation)
     {
     }
 
@@ -46,7 +46,7 @@ final readonly class UserRepository
      */
     public function validationRules(): array
     {
-        return[
+        return [
             'id' => 'required|uuid',
             'name' => 'required|string',
             'email' => 'required|email',

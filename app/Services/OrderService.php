@@ -12,70 +12,97 @@ use App\Report\Order\RemoveOrderItem;
 use Chronhub\Storm\Reporter\ReportCommand;
 use Chronhub\Storm\Contracts\Message\UniqueId;
 use App\Report\Order\DecreaseOrderItemQuantity;
+use App\Report\Order\MarkOrderAsProcessingPayment;
 
 final readonly class OrderService
 {
-    public function __construct(private ReportCommand $command, private UniqueId $uniqueId)
-    {
+    public function __construct(
+        private ReportCommand $reporter,
+        private UniqueId $uniqueId
+    ) {
     }
 
     public function createOrder(string $customerId, ?string $orderId = null): void
     {
-        $this->command->relay(new StartOrder(
+        $command = new StartOrder(
             [
                 'order_id' => $orderId ?? $this->uniqueId->generate(),
                 'customer_id' => $customerId,
             ]
-        ));
+        );
+
+        $this->reporter->relay($command);
     }
 
     public function cancelOrder(string $orderId, string $customerId): void
     {
-        $this->command->relay(new CancelOrder(
+        $command = new CancelOrder(
             [
                 'order_id' => $orderId,
                 'customer_id' => $customerId,
             ]
-        ));
+        );
+
+        $this->reporter->relay($command);
     }
 
     public function addOrderItem(string $orderId, $productId): void
     {
-        $this->command->relay(new AddOrderItem(
+        $command = new AddOrderItem(
             [
                 'order_id' => $orderId,
                 'product_id' => $productId,
             ]
-        ));
+        );
+
+        $this->reporter->relay($command);
     }
 
     public function removeOrderItem(string $orderId, string $productId): void
     {
-        $this->command->relay(new RemoveOrderItem(
+        $command = new RemoveOrderItem(
             [
                 'order_id' => $orderId,
                 'product_id' => $productId,
             ]
-        ));
+        );
+
+        $this->reporter->relay($command);
     }
 
     public function decreaseOrderItemQuantity(string $orderId, string $productId): void
     {
-        $this->command->relay(new DecreaseOrderItemQuantity(
+        $command = new DecreaseOrderItemQuantity(
             [
                 'order_id' => $orderId,
                 'product_id' => $productId,
             ]
-        ));
+        );
+
+        $this->reporter->relay($command);
     }
 
     public function payOrder(string $orderId, string $customerId): void
     {
-        $this->command->relay(new PayOrder(
+        $command = new PayOrder(
             [
                 'order_id' => $orderId,
                 'customer_id' => $customerId,
             ]
-        ));
+        );
+
+        $this->reporter->relay($command);
+    }
+
+    public function markOrderAsProcessingPayment(string $orderId, string $customerId): void
+    {
+        $command = new MarkOrderAsProcessingPayment(
+            [
+                'order_id' => $orderId,
+                'customer_id' => $customerId,
+            ]
+        );
+
+        $this->reporter->relay($command);
     }
 }

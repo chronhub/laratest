@@ -16,5 +16,7 @@ enum OrderState: string
 
     case Canceled = 'canceled';
 
+    case ProcessingPayment = 'processing_payment';
+
     case Paid = 'paid'; // order completed
 }

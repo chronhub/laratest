@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace BankRoute\Model\Customer;
 
-use BankRoute\Model\Customer\Exception\CustomerException;
 use BankRoute\Value;
+use BankRoute\Model\Customer\Exception\CustomerException;
+use function filter_var;
 
 final readonly class CustomerEmail implements Value
 {

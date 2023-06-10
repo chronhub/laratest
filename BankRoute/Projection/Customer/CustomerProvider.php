@@ -23,8 +23,12 @@ final readonly class CustomerProvider
         return $this->model->newQuery()->where('email', $customerEmail)->first();
     }
 
-    public function findAll(): LazyCollection
+    public function getRandomCustomersWithLimit(int $limit): LazyCollection
     {
-        return $this->model->newQuery()->cursor();
+        return $this->model->newQuery()
+            ->whereNotNull('current_order_id')
+            ->limit($limit)
+            ->inRandomOrder()
+            ->cursor();
     }
 }
