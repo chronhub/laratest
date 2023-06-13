@@ -11,7 +11,7 @@ class PlaceOrderAction
 {
     public function __invoke(): Response
     {
-        Artisan::call('order:seed', ['--count' => 1]);
+        Artisan::call('order:seed', ['count' => 1]);
 
         return new Response('Order placed');
     }

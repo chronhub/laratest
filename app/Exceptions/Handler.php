@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace App\Exceptions;
 
 use Throwable;
+use BankRoute\Model\Order\Exceptions\OrderNotFound;
+use BankRoute\Model\Product\ProductNotFoundInInventory;
+use BankRoute\Model\Order\Exceptions\ProductNotFoundInOrder;
 use BankRoute\Model\Customer\Exception\CustomerAlreadyExists;
+use Chronhub\Storm\Chronicler\Exceptions\ConcurrencyException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -26,6 +30,10 @@ class Handler extends ExceptionHandler
      */
     protected $dontReport = [
         CustomerAlreadyExists::class,
+        OrderNotFound::class,
+        ProductNotFoundInOrder::class,
+        ProductNotFoundInInventory::class,
+        ConcurrencyException::class,
     ];
 
     /**

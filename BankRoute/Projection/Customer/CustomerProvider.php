@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace BankRoute\Projection\Customer;
 
-use Illuminate\Support\LazyCollection;
+use Illuminate\Support\Enumerable;
 use Illuminate\Database\Eloquent\Model;
 
 final readonly class CustomerProvider
@@ -23,12 +23,13 @@ final readonly class CustomerProvider
         return $this->model->newQuery()->where('email', $customerEmail)->first();
     }
 
-    public function getRandomCustomersWithLimit(int $limit): LazyCollection
+    public function getRandomCustomersWithLimit(int $limit): Enumerable
     {
-        return $this->model->newQuery()
+        return $this->model
+            ->newQuery()
             ->whereNotNull('current_order_id')
-            ->inRandomOrder()
             ->limit($limit)
+            ->inRandomOrder()
             ->cursor();
     }
 }

@@ -56,6 +56,7 @@ use BankRoute\Model\Order\Query\GetFullPendingOrderHandler;
 use BankRoute\Model\Order\Query\GetModifiedOrdersForPayment;
 use BankRoute\Model\Customer\Handler\RegisterCustomerHandler;
 use Chronhub\Storm\Support\Bridge\MakeCausationDomainCommand;
+use BankRoute\Model\Customer\Query\GetRandomCustomersWithLimit;
 use BankRoute\Model\Order\Event\OrderMarkedAsProcessingPayment;
 use BankRoute\ProcessManager\CreateOrderOnCustomerRegistration;
 use BankRoute\Model\Order\Query\GetFullPreparedForPaymentOrders;
@@ -63,6 +64,7 @@ use BankRoute\Model\Order\Handler\DecreaseOrderItemQuantityHandler;
 use BankRoute\Model\Order\Query\GetModifiedOrdersForPaymentHandler;
 use Chronhub\Storm\Support\Bridge\HandleTransactionalDomainCommand;
 use App\Report\Customer\Signup\SendActivationEmailOnSignUpCompleted;
+use BankRoute\Model\Customer\Query\GetRandomCustomersWithLimitHandler;
 use BankRoute\Model\Order\Handler\MarkOrderAsProcessingPaymentHandler;
 use BankRoute\Model\Order\Query\GetFullPreparedForPaymentOrdersHandler;
 
@@ -117,6 +119,7 @@ class MessageRouteServiceProvider extends ServiceProvider
                     'name' => 'default',
                     'routes' => [
                         [GetCustomerById::class, GetCustomerByIdHandler::class],
+                        [GetRandomCustomersWithLimit::class, GetRandomCustomersWithLimitHandler::class],
                         [GetOrderById::class, GetOrderByIdHandler::class],
                         [GetFullOrderById::class, GetFullOrderByIdHandler::class],
                         [GetFullPendingOrder::class, GetFullPendingOrderHandler::class],

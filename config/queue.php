@@ -95,7 +95,7 @@ return [
                 ],
             ],
 
-            'worker' => env('RABBITMQ_WORKER', 'default'),
+            'worker' => env('RABBITMQ_WORKER', 'horizon'),
         ],
 
         'order-mq' => [

@@ -18,6 +18,7 @@
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
         "nyholm/psr7": "^1.8",
+        "rebing/graphql-laravel": "^8.6",
         "spiral/roadrunner": "^2.8.2",
         "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.2"
     },

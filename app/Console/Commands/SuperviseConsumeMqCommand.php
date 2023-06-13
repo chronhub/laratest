@@ -8,11 +8,15 @@ use Closure;
 use App\Queue\SupervisorMq;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Command\SignalableCommandInterface;
+use function sleep;
+use function microtime;
 use function pcntl_async_signals;
 
 final class SuperviseConsumeMqCommand extends Command implements SignalableCommandInterface
 {
-    const MIN_CHECK_EVERY = 5;
+    const MIN_CHECK_EVERY = 30;
+
+    const RESTART_ALL_EVERY = 60;
 
     protected $signature = 'supervisor:consume-mq';
 
@@ -29,7 +33,7 @@ final class SuperviseConsumeMqCommand extends Command implements SignalableComma
         ],
         'payment' => [
             'connection' => 'rabbitmq',
-            'workers' => 6,
+            'workers' => 10,
         ],
     ];
 
@@ -60,17 +64,23 @@ final class SuperviseConsumeMqCommand extends Command implements SignalableComma
             $this->supervisor->monitor($this->consumers);
         }
 
-        while ($this->supervisor->atLeastOneRunning()) {
+        $start = microtime(true);
+
+        do {
             $this->supervisor->check($this->usingOutput(), self::MIN_CHECK_EVERY);
-        }
+        } while ($this->supervisor->atLeastOneRunning() && (microtime(true) - $start) < self::RESTART_ALL_EVERY);
+
+        $this->warn('Restarting all consumers');
+
+        $this->supervisor->stop();
+
+        sleep(2);
+
+        $this->loop();
     }
 
     protected function usingOutput(): ?Closure
     {
-        //        if ($this->option('output') !== '1') {
-        //            return null;
-        //        }
-
         return function ($type, $line): void {
             $this->output->write($line);
         };

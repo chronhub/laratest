@@ -15,7 +15,7 @@ final readonly class QueryCustomerService
 {
     use PromiseHandler;
 
-    public function __construct(private ReportQuery $reportQuery)
+    public function __construct(private ReportQuery $reporter)
     {
     }
 
@@ -23,13 +23,13 @@ final readonly class QueryCustomerService
     {
         $query = GetCustomerById::fromContent(['customer_id' => $customerId]);
 
-        return $this->handlePromise($this->reportQuery->relay($query));
+        return $this->handlePromise($this->reporter->relay($query));
     }
 
     public function getRandomCustomersWithLimit(int $limit): Enumerable
     {
         $query = new GetRandomCustomersWithLimit($limit);
 
-        return $this->handlePromise($this->reportQuery->relay($query));
+        return $this->handlePromise($this->reporter->relay($query));
     }
 }

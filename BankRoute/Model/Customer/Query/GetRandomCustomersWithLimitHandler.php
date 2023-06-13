@@ -15,6 +15,8 @@ final readonly class GetRandomCustomersWithLimitHandler
 
     public function query(GetRandomCustomersWithLimit $query, Deferred $promise): void
     {
-        $promise->resolve($this->customerProvider->getRandomCustomersWithLimit($query->limit));
+        $promise->resolve(
+            $this->customerProvider->getRandomCustomersWithLimit($query->limit)
+        );
     }
 }

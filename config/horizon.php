@@ -184,7 +184,7 @@ return [
     'defaults' => [
         'supervisor-1' => [
             'connection' => 'rabbitmq',
-            'queue' => ['default'],
+            'queue' => ['customer'],
             'balance' => 'auto',
             'autoScalingStrategy' => 'time',
             'maxProcesses' => 5,
@@ -201,7 +201,21 @@ return [
             'queue' => ['order'],
             'balance' => 'auto',
             'autoScalingStrategy' => 'time',
-            'maxProcesses' => 10,
+            'maxProcesses' => 5,
+            'maxTime' => 0,
+            'maxJobs' => 1000,
+            'memory' => 4096,
+            'tries' => 1,
+            'timeout' => 10,
+            'nice' => 0,
+        ],
+
+        'supervisor-3' => [
+            'connection' => 'rabbitmq',
+            'queue' => ['payment'],
+            'balance' => 'auto',
+            'autoScalingStrategy' => 'time',
+            'maxProcesses' => 5,
             'maxTime' => 0,
             'maxJobs' => 1000,
             'memory' => 4096,
@@ -226,6 +240,10 @@ return [
                 'balanceCooldown' => 3,
             ],
             'supervisor-2' => [
+                'balanceMaxShift' => 1,
+                'balanceCooldown' => 3,
+            ],
+            'supervisor-3' => [
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
             ],
