@@ -1,0 +1,36 @@
+version: '2.7'
+
+server:
+  command: "php ./vendor/bin/rr-worker start"
+
+http:
+  address: 0.0.0.0:8000
+  middleware: ["static", "headers", "gzip"]
+  pool:
+    #max_jobs: 64 # feel free to change this
+    supervisor:
+      exec_ttl: 60s
+  headers:
+    response:
+      X-Powered-By: "RoadRunner"
+  static:
+    dir: "public"
+    forbid: [".php"]
+
+rpc:
+  enable: true
+  listen: tcp://127.0.0.1:6001
+
+relay: pipes
+
+temporal:
+  address: "172.17.0.1:7233"
+  namespace: "default"
+  activities:
+    num_workers: 5
+    debug: true
+#   command: "php ./app/Testing/GreetingWorker.php"
+
+logs:
+  level: debug
+  mode: development

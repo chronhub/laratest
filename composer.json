@@ -11,6 +11,7 @@
         "ext-pdo": "*",
         "chronhub/larastorm": "dev-main",
         "chronhub/storm": "dev-main",
+        "google/protobuf": "^3.17",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^10.x-dev",
         "laravel/horizon": "^5.1",
@@ -19,7 +20,10 @@
         "laravel/tinker": "^2.8",
         "nyholm/psr7": "^1.8",
         "rebing/graphql-laravel": "^8.6",
+        "spiral/goridge": "^3.2",
         "spiral/roadrunner": "^2.8.2",
+        "spiral/roadrunner-laravel": "^5.11",
+        "temporal/sdk": "^2.5",
         "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.2"
     },
     "require-dev": {

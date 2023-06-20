@@ -15,6 +15,7 @@ use Chronhub\Storm\Reporter\ReportQuery;
 use Chronhub\Storm\Publisher\PublishEvent;
 use Chronhub\Storm\Reporter\ReportCommand;
 use BankRoute\Model\Order\Service\OrderList;
+use App\Subscription\TemporalServiceProvider;
 use BankRoute\Model\Customer\CustomerCollection;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Events\StatementPrepared;
@@ -66,6 +67,8 @@ class AppServiceProvider extends ServiceProvider
         //        $this->app->when(CustomerReadModel::class)
         //            ->needs('$connection')
         //            ->give('mysql');
+
+        $this->app->register(TemporalServiceProvider::class);
     }
 
     public function boot(): void

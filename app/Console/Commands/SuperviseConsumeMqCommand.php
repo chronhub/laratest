@@ -8,15 +8,15 @@ use Closure;
 use App\Queue\SupervisorMq;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Command\SignalableCommandInterface;
-use function sleep;
+use function usleep;
 use function microtime;
 use function pcntl_async_signals;
 
 final class SuperviseConsumeMqCommand extends Command implements SignalableCommandInterface
 {
-    const MIN_CHECK_EVERY = 30;
+    const MIN_CHECK_EVERY = 10;
 
-    const RESTART_ALL_EVERY = 60;
+    const RESTART_ALL_EVERY = 300;
 
     protected $signature = 'supervisor:consume-mq';
 
@@ -25,15 +25,15 @@ final class SuperviseConsumeMqCommand extends Command implements SignalableComma
     private array $consumers = [
         'customer' => [
             'connection' => 'rabbitmq',
-            'workers' => 4,
+            'workers' => 2,
         ],
         'order' => [
             'connection' => 'rabbitmq',
-            'workers' => 10,
+            'workers' => 2,
         ],
         'payment' => [
             'connection' => 'rabbitmq',
-            'workers' => 10,
+            'workers' => 2,
         ],
     ];
 
@@ -74,7 +74,7 @@ final class SuperviseConsumeMqCommand extends Command implements SignalableComma
 
         $this->supervisor->stop();
 
-        sleep(2);
+        usleep(10000);
 
         $this->loop();
     }

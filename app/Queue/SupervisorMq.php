@@ -72,18 +72,15 @@ class SupervisorMq
             ->when($output !== null)
             ->each(
                 function (ConsumerMq $supervised) use ($output): void {
-
-                    //                    if ($supervised->process->isRunning()) {
-                    //                        foreach ($supervised->process->getIterator() as $type => $data) {
-                    //                            $output->__invoke(Process::OUT, $data.PHP_EOL);
-                    //                        }
-                    //                    }
-
-                    if (! $supervised->process->isRunning()) {
-                        $supervised->start();
+                    if ($supervised->process->isTerminated()) {
+                        $supervised->process->start();
                         $output->__invoke(Process::OUT, "Restart consumer $supervised->name".PHP_EOL);
+                    } else {
+                        $result = $supervised->process->getIncrementalOutput();
+                        if ($result !== '') {
+                            $output->__invoke(Process::OUT, $result.PHP_EOL);
+                        }
                     }
-
                 });
 
         $this->firstCheck = false;
@@ -129,7 +126,7 @@ class SupervisorMq
 
     private function commandAsString(string $connection, string $queue): string
     {
-        $command = 'exec @php artisan rabbitmq:consume @connection --queue=@queue --tries=10 --sleep=1 --backoff=5 --memory=256 --max-jobs=500 --timeout=0';
+        $command = 'exec @php artisan rabbitmq:consume @connection --queue=@queue --tries=1 --sleep=0 --backoff=1 --memory=256 --max-jobs=1000 --timeout=0';
 
         return str_replace(
             ['@php', '@connection', '@queue'],

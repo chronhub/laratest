@@ -6,20 +6,24 @@ namespace BankRoute\Saga;
 
 use Exception;
 use function array_reverse;
+use function func_get_args;
 
+/**
+ * @property array<SagaStep> $steps
+ */
 final readonly class SagaOrchestration
 {
     public function __construct(private array $steps)
     {
     }
 
-    public function executeSaga(): void
+    public function executeSaga($args): void
     {
         $compensationSteps = [];
 
         try {
             foreach ($this->steps as $step) {
-                $step->execute();
+                $step(...func_get_args());
                 $compensationSteps[] = $step;
             }
         } catch (Exception $e) {

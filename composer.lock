@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7f05dc9473d1aca5edf2b390922dd895",
+    "content-hash": "fcc77394fed34635e7b09fb39039079a",
     "packages": [
         {
             "name": "brick/math",
@@ -733,6 +733,102 @@
             "time": "2022-02-20T15:07:15+00:00"
         },
         {
+            "name": "google/common-protos",
+            "version": "v3.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/googleapis/common-protos-php.git",
+                "reference": "57d4ad36cc48cc0369123042908013ef2a86bb98"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/googleapis/common-protos-php/zipball/57d4ad36cc48cc0369123042908013ef2a86bb98",
+                "reference": "57d4ad36cc48cc0369123042908013ef2a86bb98",
+                "shasum": ""
+            },
+            "require": {
+                "google/protobuf": "^3.6.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.36||^8.5",
+                "sami/sami": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Google\\Api\\": "src/Api",
+                    "Google\\Iam\\": "src/Iam",
+                    "Google\\Rpc\\": "src/Rpc",
+                    "Google\\Type\\": "src/Type",
+                    "Google\\Cloud\\": "src/Cloud",
+                    "GPBMetadata\\Google\\Api\\": "metadata/Api",
+                    "GPBMetadata\\Google\\Iam\\": "metadata/Iam",
+                    "GPBMetadata\\Google\\Rpc\\": "metadata/Rpc",
+                    "GPBMetadata\\Google\\Type\\": "metadata/Type",
+                    "GPBMetadata\\Google\\Cloud\\": "metadata/Cloud",
+                    "GPBMetadata\\Google\\Logging\\": "metadata/Logging"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Google API Common Protos for PHP",
+            "homepage": "https://github.com/googleapis/common-protos-php",
+            "keywords": [
+                "google"
+            ],
+            "support": {
+                "issues": "https://github.com/googleapis/common-protos-php/issues",
+                "source": "https://github.com/googleapis/common-protos-php/tree/v3.2.0"
+            },
+            "time": "2023-01-12T16:51:46+00:00"
+        },
+        {
+            "name": "google/protobuf",
+            "version": "v3.23.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/protocolbuffers/protobuf-php.git",
+                "reference": "e611e00ffc99123fcbddc77774f26c813ead9294"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/protocolbuffers/protobuf-php/zipball/e611e00ffc99123fcbddc77774f26c813ead9294",
+                "reference": "e611e00ffc99123fcbddc77774f26c813ead9294",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": ">=5.0.0"
+            },
+            "suggest": {
+                "ext-bcmath": "Need to support JSON deserialization"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Google\\Protobuf\\": "src/Google/Protobuf",
+                    "GPBMetadata\\Google\\Protobuf\\": "src/GPBMetadata/Google/Protobuf"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "proto library for PHP",
+            "homepage": "https://developers.google.com/protocol-buffers/",
+            "keywords": [
+                "proto"
+            ],
+            "support": {
+                "source": "https://github.com/protocolbuffers/protobuf-php/tree/v3.23.3"
+            },
+            "time": "2023-06-14T16:51:17+00:00"
+        },
+        {
             "name": "graham-campbell/result-type",
             "version": "v1.1.1",
             "source": {
@@ -793,6 +889,50 @@
                 }
             ],
             "time": "2023-02-25T20:23:15+00:00"
+        },
+        {
+            "name": "grpc/grpc",
+            "version": "1.52.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/grpc/grpc-php.git",
+                "reference": "98394cd601a587ca68294e6209bd713856969105"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/grpc/grpc-php/zipball/98394cd601a587ca68294e6209bd713856969105",
+                "reference": "98394cd601a587ca68294e6209bd713856969105",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0.0"
+            },
+            "require-dev": {
+                "google/auth": "^v1.3.0"
+            },
+            "suggest": {
+                "ext-protobuf": "For better performance, install the protobuf C extension.",
+                "google/protobuf": "To get started using grpc quickly, install the native protobuf library."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Grpc\\": "src/lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "gRPC library for PHP",
+            "homepage": "https://grpc.io",
+            "keywords": [
+                "rpc"
+            ],
+            "support": {
+                "source": "https://github.com/grpc/grpc-php/tree/v1.52.0"
+            },
+            "time": "2023-02-25T05:20:08+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -3260,6 +3400,55 @@
             "time": "2023-03-05T17:13:09+00:00"
         },
         {
+            "name": "psr/cache",
+            "version": "3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/cache.git",
+                "reference": "aa5030cfa5405eccfdcb1083ce040c2cb8d253bf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/cache/zipball/aa5030cfa5405eccfdcb1083ce040c2cb8d253bf",
+                "reference": "aa5030cfa5405eccfdcb1083ce040c2cb8d253bf",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Cache\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "https://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for caching libraries",
+            "keywords": [
+                "cache",
+                "psr",
+                "psr-6"
+            ],
+            "support": {
+                "source": "https://github.com/php-fig/cache/tree/3.0.0"
+            },
+            "time": "2021-02-03T23:26:27+00:00"
+        },
+        {
             "name": "psr/clock",
             "version": "1.0.0",
             "source": {
@@ -4152,6 +4341,67 @@
             "time": "2023-02-18T15:52:58+00:00"
         },
         {
+            "name": "spiral/attributes",
+            "version": "v3.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spiral/attributes.git",
+                "reference": "b1c3f9cd8b7b0632f03e7046a38c2a98f3ed2e65"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spiral/attributes/zipball/b1c3f9cd8b7b0632f03e7046a38c2a98f3ed2e65",
+                "reference": "b1c3f9cd8b7b0632f03e7046a38c2a98f3ed2e65",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1",
+                "psr/cache": ">=1.0",
+                "psr/simple-cache": "1 - 3"
+            },
+            "require-dev": {
+                "doctrine/annotations": "^1.12 || ^2.0",
+                "jetbrains/phpstorm-attributes": "^1.0",
+                "phpunit/phpunit": "^9.5.20",
+                "symfony/var-dumper": "^5.2 || ^6.0",
+                "vimeo/psalm": "^4.21"
+            },
+            "suggest": {
+                "doctrine/annotations": "^1.0 for Doctrine metadata driver support"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.1.x-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/polyfill.php"
+                ],
+                "psr-4": {
+                    "Spiral\\Attributes\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kirill Nesmeyanov (SerafimArts)",
+                    "email": "kirill.nesmeyanov@spiralscout.com"
+                }
+            ],
+            "description": "PHP attributes reader",
+            "homepage": "https://spiral.dev",
+            "support": {
+                "issues": "https://github.com/spiral/attributes/issues",
+                "source": "https://github.com/spiral/attributes"
+            },
+            "time": "2023-03-15T07:25:15+00:00"
+        },
+        {
             "name": "spiral/core",
             "version": "3.7.1",
             "source": {
@@ -4534,6 +4784,153 @@
                 "source": "https://github.com/spiral/roadrunner-http/tree/v2.2.0"
             },
             "time": "2022-11-30T11:40:04+00:00"
+        },
+        {
+            "name": "spiral/roadrunner-kv",
+            "version": "v3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spiral/roadrunner-kv.git",
+                "reference": "4e9694faad119d3ece2d7632f85f980f14ab5daf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spiral/roadrunner-kv/zipball/4e9694faad119d3ece2d7632f85f980f14ab5daf",
+                "reference": "4e9694faad119d3ece2d7632f85f980f14ab5daf",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "google/protobuf": "^3.7",
+                "php": ">=8.1",
+                "psr/simple-cache": "2 - 3",
+                "spiral/goridge": "^3.1",
+                "spiral/roadrunner": "^2.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^8.0",
+                "roave/security-advisories": "dev-master",
+                "spiral/code-style": "^1.0",
+                "symfony/var-dumper": "^5.1",
+                "vimeo/psalm": ">=4.4"
+            },
+            "suggest": {
+                "ext-igbinary": "(>3.1.6) Igbinary serailizer support",
+                "ext-sodium": "Sodium serailizer support"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GPBMetadata\\": "generated/GPBMetadata",
+                    "Spiral\\RoadRunner\\KeyValue\\": [
+                        "src",
+                        "generated/Spiral/RoadRunner/KeyValue"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kirill Nesmeyanov (SerafimArts)",
+                    "email": "kirill.nesmeyanov@spiralscout.com"
+                },
+                {
+                    "name": "RoadRunner Community",
+                    "homepage": "https://github.com/spiral/roadrunner/graphs/contributors"
+                }
+            ],
+            "description": "RoadRunner kv plugin bridge",
+            "support": {
+                "issues": "https://github.com/spiral/roadrunner-kv/issues",
+                "source": "https://github.com/spiral/roadrunner-kv/tree/v3.0.0"
+            },
+            "time": "2022-09-26T08:54:18+00:00"
+        },
+        {
+            "name": "spiral/roadrunner-laravel",
+            "version": "v5.11.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spiral/roadrunner-laravel.git",
+                "reference": "f9337ac5727cc42df78f5c54e71d621a55fb123b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spiral/roadrunner-laravel/zipball/f9337ac5727cc42df78f5c54e71d621a55fb123b",
+                "reference": "f9337ac5727cc42df78f5c54e71d621a55fb123b",
+                "shasum": ""
+            },
+            "require": {
+                "composer-runtime-api": "^2.0",
+                "laravel/framework": "~9.33 || ~10.0",
+                "nyholm/psr7": "^1.5",
+                "php": "^8.0",
+                "spiral/roadrunner-http": "^2.2",
+                "spiral/roadrunner-worker": "^2.2",
+                "symfony/psr-http-message-bridge": "^2.1"
+            },
+            "require-dev": {
+                "brick/math": "^0.10",
+                "guzzlehttp/guzzle": "^6.3 || ~7.0",
+                "inertiajs/inertia-laravel": "^0.6",
+                "laravel/laravel": "~9.1 || ~10.0",
+                "laravel/scout": "~9.0 || ~10.0",
+                "laravel/socialite": "^5.0",
+                "laravel/telescope": "^4.5",
+                "livewire/livewire": "^2.7",
+                "mockery/mockery": "^1.4.4",
+                "phpstan/phpstan": "~1.6",
+                "phpunit/phpunit": "^9.5.10",
+                "tightenco/ziggy": "^1.4.0"
+            },
+            "bin": [
+                "bin/rr-worker"
+            ],
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Spiral\\RoadRunnerLaravel\\ServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "helpers/helpers.php"
+                ],
+                "psr-4": {
+                    "Spiral\\RoadRunnerLaravel\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "tarampampam",
+                    "homepage": "https://github.com/tarampampam"
+                }
+            ],
+            "description": "RoadRunner: Bridge for Laravel applications",
+            "keywords": [
+                "Bridge",
+                "laravel",
+                "roadrunner"
+            ],
+            "support": {
+                "issues": "https://github.com/spiral/roadrunner-laravel/issues",
+                "source": "https://github.com/spiral/roadrunner-laravel"
+            },
+            "time": "2023-01-26T08:38:28+00:00"
         },
         {
             "name": "spiral/roadrunner-worker",
@@ -5191,6 +5588,69 @@
                 }
             ],
             "time": "2023-05-23T14:45:45+00:00"
+        },
+        {
+            "name": "symfony/filesystem",
+            "version": "v6.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/filesystem.git",
+                "reference": "97b698e1d77d356304def77a8d0cd73090b359ea"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/97b698e1d77d356304def77a8d0cd73090b359ea",
+                "reference": "97b698e1d77d356304def77a8d0cd73090b359ea",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1",
+                "symfony/polyfill-ctype": "~1.8",
+                "symfony/polyfill-mbstring": "~1.8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Filesystem\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Provides basic utilities for the filesystem",
+            "homepage": "https://symfony.com",
+            "support": {
+                "source": "https://github.com/symfony/filesystem/tree/v6.3.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2023-05-30T17:12:32+00:00"
         },
         {
             "name": "symfony/finder",
@@ -7404,6 +7864,96 @@
                 }
             ],
             "time": "2023-04-28T13:28:14+00:00"
+        },
+        {
+            "name": "temporal/sdk",
+            "version": "v2.5.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/temporalio/sdk-php.git",
+                "reference": "6c85e88783ad3a6f13106e536adbca35980e5b73"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/temporalio/sdk-php/zipball/6c85e88783ad3a6f13106e536adbca35980e5b73",
+                "reference": "6c85e88783ad3a6f13106e536adbca35980e5b73",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "google/common-protos": "^1.3 || ^2.0 || ^3.0",
+                "google/protobuf": "^3.22",
+                "grpc/grpc": "^1.42",
+                "nesbot/carbon": "^2.66",
+                "php": ">=8.0",
+                "psr/log": "^1.0.1 || ^2.0 || ^3.0",
+                "react/promise": "^2.9",
+                "spiral/attributes": "^2.8 || ^3.0",
+                "spiral/roadrunner-cli": "^2.2 || ^3.0",
+                "spiral/roadrunner-kv": "^2.1 || ^3.0 || ^4.0",
+                "spiral/roadrunner-worker": "^2.1.3 || ^3.0",
+                "symfony/filesystem": "^4.4.20 || ^5.0 || ^6.0",
+                "symfony/http-client": "^4.4.20 || ^5.0 || ^6.0",
+                "symfony/process": "^4.4.20 || ^5.0 || ^6.0"
+            },
+            "require-dev": {
+                "composer/composer": "^2.0",
+                "dereuromark/composer-prefer-lowest": "^0.1.10",
+                "doctrine/annotations": "^1.11",
+                "friendsofphp/php-cs-fixer": "^3.0",
+                "illuminate/support": "^9.0",
+                "jetbrains/phpstorm-attributes": "dev-master@dev",
+                "laminas/laminas-code": "^4.0",
+                "monolog/monolog": "^2.1 || ^3.0",
+                "phpunit/phpunit": "^9.5.21",
+                "symfony/translation": "^6.0",
+                "symfony/var-dumper": "^6.0",
+                "vimeo/psalm": "^4.1"
+            },
+            "suggest": {
+                "doctrine/annotations": "^1.11 for Doctrine metadata driver support"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Temporal\\": "src",
+                    "GPBMetadata\\": "api/v1/GPBMetadata",
+                    "Temporal\\Api\\": "api/v1/Temporal/Api",
+                    "Temporal\\Testing\\": "testing/src",
+                    "Temporal\\Roadrunner\\": "api/v1/Temporal/Roadrunner",
+                    "Temporal\\Api\\Testservice\\": "testing/api/testservice/Temporal/Api/Testservice",
+                    "GPBMetadata\\Temporal\\Api\\Testservice\\": "testing/api/testservice/GPBMetadata/Temporal/Api/Testservice"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Temporal SDK",
+            "homepage": "https://temporal.io",
+            "keywords": [
+                "activity",
+                "api",
+                "event-sourcing",
+                "library",
+                "sdk",
+                "service-bus",
+                "temporal",
+                "workflow"
+            ],
+            "support": {
+                "docs": "https://docs.temporal.io",
+                "forum": "https://community.temporal.io",
+                "issues": "https://github.com/temporalio/sdk-php/issues",
+                "source": "https://github.com/temporalio/sdk-php"
+            },
+            "time": "2023-05-31T21:08:45+00:00"
         },
         {
             "name": "thecodingmachine/safe",
